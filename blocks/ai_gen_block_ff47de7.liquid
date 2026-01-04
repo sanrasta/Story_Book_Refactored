@@ -1,0 +1,663 @@
+{% doc %}
+  @prompt
+    Create a clean, modern 3-step section layout for a website.
+    Each step has:
+    	•	A numbered circle (1, 2, 3)
+    	•	A small illustration or icon
+    	•	A short title and 1–2 lines of text below
+    
+    The layout should display steps horizontally on desktop (in a 3-column grid) and vertically stacked on mobile (with good spacing).
+    
+    Design style: minimalist, white background, soft shadows, rounded cards, smooth hover effects.
+    Use a neutral modern font (like Inter or Poppins).
+    Include subtle color accents for the step numbers (e.g., light blue or gradient).
+    
+    Example structure:
+    Step 1: Choose your story
+    Step 2: Personalize it
+    Step 3: Receive your book
+    
+    The section should look premium, playful, and family-friendly , photos instead of icons, make the number to the headine, the number is also next to headline text in mobile also, number next to header in mobile view
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-steps-section-{{ ai_gen_id }} {
+    padding: {{ block.settings.section_padding_top }}px 0 {{ block.settings.section_padding_bottom }}px;
+    background-color: {{ block.settings.background_color }};
+  }
+
+  .ai-steps-container-{{ ai_gen_id }} {
+    max-width: {{ block.settings.container_width }}px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .ai-steps-header-{{ ai_gen_id }} {
+    text-align: center;
+    margin-bottom: {{ block.settings.header_spacing }}px;
+  }
+
+  .ai-steps-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.title_size }}px;
+    font-weight: 600;
+    color: {{ block.settings.text_color }};
+    margin: 0 0 16px;
+    line-height: 1.2;
+  }
+
+  .ai-steps-subtitle-{{ ai_gen_id }} {
+    font-size: {{ block.settings.subtitle_size }}px;
+    color: {{ block.settings.text_color }};
+    opacity: 0.8;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .ai-steps-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: {{ block.settings.card_spacing }}px;
+    margin-top: {{ block.settings.grid_spacing }}px;
+  }
+
+  .ai-step-card-{{ ai_gen_id }} {
+    background: {{ block.settings.card_background }};
+    border-radius: {{ block.settings.card_border_radius }}px;
+    padding: {{ block.settings.card_padding }}px;
+    text-align: center;
+    box-shadow: 0 {{ block.settings.shadow_vertical }}px {{ block.settings.shadow_blur }}px rgba(0, 0, 0, {{ block.settings.shadow_opacity | divided_by: 100.0 }});
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ai-step-card-{{ ai_gen_id }}:hover {
+    transform: translateY(-{{ block.settings.hover_lift }}px);
+    box-shadow: 0 {{ block.settings.shadow_vertical | plus: 5 }}px {{ block.settings.shadow_blur | plus: 10 }}px rgba(0, 0, 0, {{ block.settings.shadow_opacity | divided_by: 100.0 | times: 1.5 }});
+  }
+
+  .ai-step-image-{{ ai_gen_id }} {
+    width: {{ block.settings.image_size }}px;
+    height: {{ block.settings.image_size }}px;
+    margin: 0 auto {{ block.settings.image_spacing }}px;
+    border-radius: {{ block.settings.image_border_radius }}px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .ai-step-image-{{ ai_gen_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .ai-step-card-{{ ai_gen_id }}:hover .ai-step-image-{{ ai_gen_id }} img {
+    transform: scale(1.05);
+  }
+
+  .ai-step-image-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    font-size: 12px;
+    text-align: center;
+    padding: 10px;
+  }
+
+  .ai-step-image-placeholder-{{ ai_gen_id }} svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.3;
+  }
+
+  .ai-step-title-wrapper-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: {{ block.settings.number_title_gap }}px;
+    margin-bottom: {{ block.settings.title_spacing }}px;
+  }
+
+  .ai-step-number-{{ ai_gen_id }} {
+    width: {{ block.settings.number_size }}px;
+    height: {{ block.settings.number_size }}px;
+    border-radius: 50%;
+    background: {{ block.settings.accent_color }};
+    color: {{ block.settings.number_text_color }};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: {{ block.settings.number_font_size }}px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .ai-step-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.step_title_size }}px;
+    font-weight: 600;
+    color: {{ block.settings.text_color }};
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .ai-step-description-{{ ai_gen_id }} {
+    font-size: {{ block.settings.step_description_size }}px;
+    color: {{ block.settings.text_color }};
+    opacity: 0.8;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  @media screen and (max-width: 990px) {
+    .ai-steps-grid-{{ ai_gen_id }} {
+      grid-template-columns: repeat(2, 1fr);
+      gap: {{ block.settings.card_spacing | times: 0.8 }}px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-steps-section-{{ ai_gen_id }} {
+      padding: {{ block.settings.section_padding_top | times: 0.7 }}px 0 {{ block.settings.section_padding_bottom | times: 0.7 }}px;
+    }
+
+    .ai-steps-container-{{ ai_gen_id }} {
+      padding: 0 16px;
+    }
+
+    .ai-steps-grid-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: {{ block.settings.card_spacing | times: 0.6 }}px;
+    }
+
+    .ai-steps-title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.title_size | times: 0.8 }}px;
+    }
+
+    .ai-step-card-{{ ai_gen_id }} {
+      padding: {{ block.settings.card_padding | times: 0.8 }}px;
+    }
+
+    .ai-step-number-{{ ai_gen_id }} {
+      width: {{ block.settings.number_size | times: 0.9 }}px;
+      height: {{ block.settings.number_size | times: 0.9 }}px;
+      font-size: {{ block.settings.number_font_size | times: 0.9 }}px;
+    }
+
+    .ai-step-image-{{ ai_gen_id }} {
+      width: {{ block.settings.image_size | times: 0.9 }}px;
+      height: {{ block.settings.image_size | times: 0.9 }}px;
+    }
+
+    .ai-step-title-wrapper-{{ ai_gen_id }} {
+      gap: {{ block.settings.number_title_gap | times: 0.8 }}px;
+    }
+
+    .ai-step-title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.step_title_size | times: 0.9 }}px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-steps-section-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-steps-container-{{ ai_gen_id }}">
+    {% if block.settings.section_title != blank or block.settings.section_subtitle != blank %}
+      <div class="ai-steps-header-{{ ai_gen_id }}">
+        {% if block.settings.section_title != blank %}
+          <h2 class="ai-steps-title-{{ ai_gen_id }}">{{ block.settings.section_title }}</h2>
+        {% endif %}
+        {% if block.settings.section_subtitle != blank %}
+          <p class="ai-steps-subtitle-{{ ai_gen_id }}">{{ block.settings.section_subtitle }}</p>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <div class="ai-steps-grid-{{ ai_gen_id }}">
+      <div class="ai-step-card-{{ ai_gen_id }}">
+        <div class="ai-step-image-{{ ai_gen_id }}">
+          {% if block.settings.step_1_image %}
+            <img
+              src="{{ block.settings.step_1_image | image_url: width: 400 }}"
+              alt="{{ block.settings.step_1_image.alt | escape }}"
+              loading="lazy"
+              width="{{ block.settings.step_1_image.width }}"
+              height="{{ block.settings.step_1_image.height }}"
+            >
+          {% else %}
+            <div class="ai-step-image-placeholder-{{ ai_gen_id }}">
+              {{ 'image' | placeholder_svg_tag }}
+            </div>
+          {% endif %}
+        </div>
+        <div class="ai-step-title-wrapper-{{ ai_gen_id }}">
+          <div class="ai-step-number-{{ ai_gen_id }}">1</div>
+          <h3 class="ai-step-title-{{ ai_gen_id }}">{{ block.settings.step_1_title }}</h3>
+        </div>
+        <p class="ai-step-description-{{ ai_gen_id }}">{{ block.settings.step_1_description }}</p>
+      </div>
+
+      <div class="ai-step-card-{{ ai_gen_id }}">
+        <div class="ai-step-image-{{ ai_gen_id }}">
+          {% if block.settings.step_2_image %}
+            <img
+              src="{{ block.settings.step_2_image | image_url: width: 400 }}"
+              alt="{{ block.settings.step_2_image.alt | escape }}"
+              loading="lazy"
+              width="{{ block.settings.step_2_image.width }}"
+              height="{{ block.settings.step_2_image.height }}"
+            >
+          {% else %}
+            <div class="ai-step-image-placeholder-{{ ai_gen_id }}">
+              {{ 'image' | placeholder_svg_tag }}
+            </div>
+          {% endif %}
+        </div>
+        <div class="ai-step-title-wrapper-{{ ai_gen_id }}">
+          <div class="ai-step-number-{{ ai_gen_id }}">2</div>
+          <h3 class="ai-step-title-{{ ai_gen_id }}">{{ block.settings.step_2_title }}</h3>
+        </div>
+        <p class="ai-step-description-{{ ai_gen_id }}">{{ block.settings.step_2_description }}</p>
+      </div>
+
+      <div class="ai-step-card-{{ ai_gen_id }}">
+        <div class="ai-step-image-{{ ai_gen_id }}">
+          {% if block.settings.step_3_image %}
+            <img
+              src="{{ block.settings.step_3_image | image_url: width: 400 }}"
+              alt="{{ block.settings.step_3_image.alt | escape }}"
+              loading="lazy"
+              width="{{ block.settings.step_3_image.width }}"
+              height="{{ block.settings.step_3_image.height }}"
+            >
+          {% else %}
+            <div class="ai-step-image-placeholder-{{ ai_gen_id }}">
+              {{ 'image' | placeholder_svg_tag }}
+            </div>
+          {% endif %}
+        </div>
+        <div class="ai-step-title-wrapper-{{ ai_gen_id }}">
+          <div class="ai-step-number-{{ ai_gen_id }}">3</div>
+          <h3 class="ai-step-title-{{ ai_gen_id }}">{{ block.settings.step_3_title }}</h3>
+        </div>
+        <p class="ai-step-description-{{ ai_gen_id }}">{{ block.settings.step_3_description }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "3-step process",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section header"
+    },
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "Section title",
+      "default": "How it works"
+    },
+    {
+      "type": "textarea",
+      "id": "section_subtitle",
+      "label": "Section subtitle",
+      "default": "Follow these simple steps to get started"
+    },
+    {
+      "type": "header",
+      "content": "Step 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "step_1_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "step_1_title",
+      "label": "Title",
+      "default": "Choose your story"
+    },
+    {
+      "type": "textarea",
+      "id": "step_1_description",
+      "label": "Description",
+      "default": "Browse our collection of personalized stories and select the perfect one for your family."
+    },
+    {
+      "type": "header",
+      "content": "Step 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "step_2_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "step_2_title",
+      "label": "Title",
+      "default": "Personalize it"
+    },
+    {
+      "type": "textarea",
+      "id": "step_2_description",
+      "label": "Description",
+      "default": "Add names, photos, and special details to make the story uniquely yours."
+    },
+    {
+      "type": "header",
+      "content": "Step 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "step_3_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "step_3_title",
+      "label": "Title",
+      "default": "Receive your book"
+    },
+    {
+      "type": "textarea",
+      "id": "step_3_description",
+      "label": "Description",
+      "default": "Your custom book will be printed and delivered right to your door within 5-7 business days."
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#2E2A39"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent color",
+      "default": "#4A90E2"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "number_text_color",
+      "label": "Number text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "container_width",
+      "min": 800,
+      "max": 1400,
+      "step": 50,
+      "unit": "px",
+      "label": "Container width",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "min": 20,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "min": 20,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "header_spacing",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "label": "Header spacing",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "grid_spacing",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "label": "Grid spacing",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "card_spacing",
+      "min": 15,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "label": "Card spacing",
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "Card style"
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "min": 20,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "label": "Card padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Card border radius",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "shadow_vertical",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Shadow vertical offset",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "shadow_blur",
+      "min": 0,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "label": "Shadow blur",
+      "default": 25
+    },
+    {
+      "type": "range",
+      "id": "shadow_opacity",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "%",
+      "label": "Shadow opacity",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "hover_lift",
+      "min": 0,
+      "max": 15,
+      "step": 1,
+      "unit": "px",
+      "label": "Hover lift effect",
+      "default": 5
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 24,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Section title size",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Section subtitle size",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "step_title_size",
+      "min": 16,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "label": "Step title size",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "step_description_size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Step description size",
+      "default": 15
+    },
+    {
+      "type": "header",
+      "content": "Step elements"
+    },
+    {
+      "type": "range",
+      "id": "number_size",
+      "min": 30,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "label": "Number circle size",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "number_font_size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Number font size",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "number_title_gap",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Number to title gap",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "image_size",
+      "min": 60,
+      "max": 120,
+      "step": 5,
+      "unit": "px",
+      "label": "Image size",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "label": "Image border radius",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "image_spacing",
+      "min": 10,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Image bottom spacing",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "title_spacing",
+      "min": 8,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Title bottom spacing",
+      "default": 16
+    }
+  ],
+  "presets": [
+    {
+      "name": "3-step process"
+    }
+  ]
+}
+{% endschema %}

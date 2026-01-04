@@ -1,0 +1,224 @@
+{% schema %}
+{
+  "name": "TikTok Video Slider",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading_text",
+      "label": "Heading",
+      "default": "Heading" 
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border Color",
+      "default": "#fe2d52"
+    },
+{
+  "type": "range",
+  "id": "border_width",
+  "label": "Border Width",
+  "min": 1,
+  "max": 10,
+  "step": 1,
+  "default": 4,
+  "unit": "px"
+},
+    {
+  "type": "range",
+  "id": "border_radius",
+  "label": "Border Radius",
+  "min": 0,
+  "max": 20,
+  "step": 1,
+  "default": 10,
+  "unit": "px"
+}
+  ],
+  "blocks": [
+    {
+      "type": "video",
+      "name": "Video",
+      "settings": [
+        {
+          "type": "text",
+          "id": "video_media",
+          "label": "Upload Video URL"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "TikTok Video Slider",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+  .slider-containerv8 {
+    position: relative;
+    width: 100%;
+    overflow-x: auto;
+    display: flex;
+    align-items: center;
+    scroll-snap-type: x mandatory;
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+  }
+
+  .sliderv8 {
+    display: flex;
+    gap: 10px;
+    scroll-snap-type: x mandatory;
+  }
+
+  .slidev8 {
+    flex: 0 0 60%;
+    max-width: max-content;
+    scroll-snap-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+
+
+  .with-borderv8 {
+    padding: {{ section.settings.border_width }}px;
+    border-radius: {{ section.settings.border_radius}}px;
+    background: {{ section.settings.border_color }};
+  }
+
+  .play-buttonv8,
+  .pause-buttonv8 {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 10;
+  }
+          .tiktok-videov8 {
+            width: 100%;
+            max-width: 225px;
+            height: auto;
+            aspect-ratio: 9 / 16;
+            border-radius: 10px;
+            display: block;
+        }
+
+  .play-buttonv8 {
+    display: flex;
+  }
+
+  .pause-buttonv8 {
+    display: none;
+    opacity: 1;
+    transition: opacity 0.5s ease;
+  }
+
+  .pause-buttonv8.hiddenv8 {
+    opacity: 0;
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+      const slides = document.querySelectorAll(".slidev8");
+
+      slides.forEach(slide => {
+          const playButton = slide.querySelector(".play-buttonv8");
+          const pauseButton = slide.querySelector(".pause-buttonv8");
+          const video = slide.querySelector("video");
+
+          let hidePauseButtonTimeout;
+
+          const showPauseButton = () => {
+              pauseButton.classList.remove("hiddenv8");
+              clearTimeout(hidePauseButtonTimeout);
+              hidePauseButtonTimeout = setTimeout(() => {
+                  pauseButton.classList.add("hiddenv8");
+              }, 1000);
+          };
+
+          playButton.addEventListener("click", () => {
+              // Pause other videos
+              document.querySelectorAll("video").forEach(v => {
+                  if (v !== video) {
+                      v.pause();
+                      v.classList.remove("playingv8");
+                  }
+              });
+
+              // Play selected video
+              video.play();
+              video.classList.add("playingv8");
+              playButton.style.display = "none";
+              pauseButton.style.display = "flex";
+              showPauseButton();
+          });
+
+          pauseButton.addEventListener("click", () => {
+              video.pause();
+              video.classList.remove("playingv8");
+              playButton.style.display = "flex";
+              pauseButton.style.display = "none";
+          });
+
+          video.addEventListener("mousemove", showPauseButton);
+          video.addEventListener("click", showPauseButton);
+
+          video.addEventListener("play", () => {
+              playButton.style.display = "none";
+              pauseButton.style.display = "flex";
+              showPauseButton();
+          });
+
+          video.addEventListener("pause", () => {
+              playButton.style.display = "flex";
+              pauseButton.style.display = "none";
+          });
+      });
+  });
+</script>
+
+<h2 style = "text-align: center;">{{ section.settings.heading_text }} </h2>
+<div class="slider-containerv8">
+  <div class="sliderv8">
+    {% for block in section.blocks %}
+      {% if block.settings.video_media != blank %}
+        <div class="slidev8">
+          <div class="with-borderv8">
+            <video class="tiktok-videov8" playsinline preload="metadata">
+              <source src="{{ block.settings.video_media }}" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+          <div class="pause-buttonv8 hiddenv8">❚❚</div>
+          <div class="play-buttonv8">▷</div>
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+</div>
+
+<script>
+
+  document.addEventListener("DOMContentLoaded", function() {
+    let videos = document.querySelectorAll(".tiktok-videov8");
+    videos.forEach(video => {
+      video.load(); // Ensures the browser loads the video properly
+    });
+  });
+
+</script>

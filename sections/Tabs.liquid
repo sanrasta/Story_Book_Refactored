@@ -1,0 +1,327 @@
+{% schema %}
+{
+  "name": "Product Info Tabs",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Tab Titles"
+    },
+    {
+    "type": "color",
+     "id" : "color_border",
+      "label": "Active T",
+      "default": "#0C3D3D"
+    },
+    {
+      "type": "text",
+      "id": "tab1_title",
+      "label": "Tab 1 Title",
+      "default": "3 STEPS"
+    },
+    {
+      "type": "text",
+      "id": "tab2_title",
+      "label": "Tab 2 Title",
+      "default": "DESCRIPTION"
+    },
+    {
+      "type": "text",
+      "id": "tab3_title",
+      "label": "Tab 3 Title",
+      "default": "SHIPPING"
+    },
+    {
+      "type": "text",
+      "id": "tab4_title",
+      "label": "Tab 4 Title",
+      "default": "RETURNS"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "Tab1",
+      "name": "Tab 1",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "html",
+          "id": "custom_html1",
+          "label": "Custom HTML"
+        },
+         {
+          "type": "text",
+          "id": "heading1",
+          "label": "Header"
+        },
+       {
+          "type": "text",
+          "id": "textv1",
+          "label": "text"
+        }
+      ]
+    },
+    {
+      "type": "Tab2",
+      "name": "Tab 2",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "html",
+          "id": "custom_html2",
+          "label": "Custom HTML"
+        },
+        {
+          "type": "text",
+          "id": "heading2",
+          "label": "Header"
+        },
+       {
+          "type": "text",
+          "id": "textv2",
+          "label": "text"
+        }
+      ]
+    },
+    {
+      "type": "Tab3",
+      "name": "Tab 3",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "html",
+          "id": "custom_html3",
+          "label": "Custom HTML"
+        },
+         {
+          "type": "text",
+          "id": "heading3",
+          "label": "Header"
+        },
+       {
+          "type": "text",
+          "id": "textv3",
+          "label": "text"
+        }
+      ]
+    },
+    {
+      "type": "Tab4",
+      "name": "Tab 4",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "html",
+          "id": "custom_html4",
+          "label": "Custom HTML"
+        },
+       {
+          "type": "text",
+          "id": "heading4",
+          "label": "Header"
+        },
+       {
+          "type": "text",
+          "id": "textv4",
+          "label": "text"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Info Tabs",
+      "blocks": [
+        {
+          "type": "Tab1"
+        },
+        {
+          "type": "Tab2"
+        },
+        {
+          "type": "Tab3"
+        },
+        {
+          "type": "Tab4"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Info Tabs</title>
+    <style>
+        .tabs-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .tabs-header {
+            display: flex;
+            max-width: 1200px;
+            justify-content: center;
+            align-items: center;
+            margin: auto;
+            border-bottom: 1px solid #B3B3B3;
+            padding: 0px 70px;
+        }
+
+        @media screen and (max-width: 768px) {
+            .tabs-header {
+                padding: 0px;
+            }
+
+            .tab {
+                font-size: 12px !important;
+            }
+        }
+
+        .tab {
+            flex: 1;
+            padding: 8px 8px;
+            text-align: center;
+            font-weight: bold;
+            cursor: pointer;
+            background: #fff;
+            color: #1a1817;
+            display: flex;
+            justify-content: center;
+            font-size: 13px;
+            transition: background-color 0.8s ease;
+        }
+
+        .tab.active {
+            border-bottom: 4px solid {{section.settings.color_border}};
+          color: {{section.settings.color_border}};
+        }
+
+        .tab-content {
+            padding: 5px 0px;
+            display: none;
+            font-size: 13px;
+            transition: opacity 0.5s ease;
+            color: #1a1817;
+        }
+
+        .tab-content.active {
+            display: block;
+            background: #fff;
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-width">
+        <div class="tabs-container">
+            <div class="tabs-header">
+                <div class="tab active" onclick="showTabContent('material')">
+                    {{ section.settings.tab1_title }}
+                </div>
+                <div class="tab" onclick="showTabContent('description')">{{ section.settings.tab2_title }}</div>
+                <div class="tab" onclick="showTabContent('shipping')">{{ section.settings.tab3_title }}</div>
+                <div class="tab" onclick="showTabContent('returns')">{{ section.settings.tab4_title }}</div>
+            </div>
+
+            <!-- Tab 1 Content -->
+            <div id="material" class="tab-content active">
+    {% for block in section.blocks %}
+        {% if block.type == "Tab1" %}
+            {% if block.settings.heading1 != blank %}
+                <h5>{{ block.settings.heading1 }}</h5>
+            {% endif %}
+            
+            {% if block.settings.textv1 != blank %}
+                <p>{{ block.settings.textv1 }}</p>
+            {% endif %}
+
+            {% if block.settings.custom_html1 != blank %}
+                {{ block.settings.custom_html1 | raw }}
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+            </div>
+
+            <!-- Tab 2 Content -->
+<div id="description" class="tab-content">
+    {% for block in section.blocks %}
+        {% if block.type == "Tab2" %}
+            {% if block.settings.heading2 != blank %}
+                <h5>{{ block.settings.heading2 }}</h5>
+            {% endif %}
+            
+            {% if block.settings.textv2 != blank %}
+                <p>{{ block.settings.textv2 }}</p>
+            {% endif %}
+
+            {% if block.settings.custom_html2 != blank %}
+                {{ block.settings.custom_html2 | raw }}
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+</div>
+
+
+            <!-- Tab 3 Content -->
+            <div id="shipping" class="tab-content">
+    {% for block in section.blocks %}
+        {% if block.type == "Tab3" %}
+            {% if block.settings.heading3 != blank %}
+                <h5>{{ block.settings.heading3 }}</h5>
+            {% endif %}
+            
+            {% if block.settings.textv3 != blank %}
+                <p>{{ block.settings.textv3 }}</p>
+            {% endif %}
+
+            {% if block.settings.custom_html3 != blank %}
+                {{ block.settings.custom_html3 | raw }}
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+            </div>
+
+            <!-- Tab 4 Content -->
+            <div id="returns" class="tab-content">
+    {% for block in section.blocks %}
+        {% if block.type == "Tab4" %}
+            {% if block.settings.heading4 != blank %}
+                <h5>{{ block.settings.heading4 }}</h5>
+            {% endif %}
+            
+            {% if block.settings.textv4 != blank %}
+                <p>{{ block.settings.textv4 }}</p>
+            {% endif %}
+
+            {% if block.settings.custom_html4 != blank %}
+                {{ block.settings.custom_html4 | raw }}
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTabContent(tabId) {
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabs.forEach(tab => tab.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+
+            document.querySelector(`[onclick="showTabContent('${tabId}')"]`).classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+    </script>
+</body>
+
+</html>
+

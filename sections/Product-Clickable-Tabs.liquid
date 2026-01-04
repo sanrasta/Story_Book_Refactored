@@ -1,0 +1,819 @@
+{% schema %}
+{
+  "name": "Moonpod",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading-v1",
+      "label": "heading",
+      "default": "heading goes here"
+    },
+    {
+      "type": "text",
+      "id": "description-v1",
+      "label": "description",
+      "default": "heading goes here"
+    },
+{
+  "type": "range",
+  "id": "border_width",
+  "label": "Border Width",
+  "min": 1,
+  "max": 10,
+  "step": 1,
+  "default": 4,
+  "unit": "px"
+},
+    {
+  "type": "range",
+  "id": "border_radius",
+  "label": "Border Radius",
+  "min": 0,
+  "max": 50,
+  "step": 1,
+  "default": 5,
+  "unit": "px"
+},
+    {
+      "type": "color",
+      "id": "active_heading_color",
+      "label": "active_heading color",
+      "default": "#000"
+    },
+        {
+      "type": "color",
+      "id": "heading_color",
+      "label": "non active heading color",
+      "default": "#000"
+    },
+    {
+      "type": "image_picker",
+      "id": "Icon_Image1",
+      "label": "Icon 1 Image"
+    },
+        {
+      "type": "image_picker",
+      "id": "Icon_Image2",
+      "label": "Icon 2 Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "Icon_Image3",
+      "label": "Icon 3 Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "Icon_Image4",
+      "label": "Icon 4 Image"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "first-tab",
+      "name": "first tab",
+      "limit": 1,
+      "settings": [
+         {
+          "type": "text",
+          "id": "heading1",
+          "label": "Tab Header",
+          "default":"heading 1"
+        },
+        {
+          "type": "text",
+          "id": "headingtitle1",
+          "label": "Header",
+          "default":"heading 1"
+        },
+        {
+          "type": "text",
+          "id": "description1",
+          "label": "Description",
+          "default":"1 Lorem ipsum dolor sit amet. Nam veniam autem quo dolores internos quo veniam quos ex quos nesciunt id voluptate iure aut placeat sapiente eos quia sunt. Quo asperiores molestiae At eligendi tempore et dolor excepturi sed dolorem sunt. Vel galisum dolor ut sint temporibus aut nobis natus qui reiciendis recusandae! 1"
+        },
+        {
+          "type": "text",
+          "id": "video-url1",
+          "label": "video url",
+          "default":"//www.moonpod.co/cdn/shop/videos/c/vp/5bdcdfe3eb454c0baf9fa624443cf5b9/5bdcdfe3eb454c0baf9fa624443cf5b9.HD-1080p-4.8Mbps-39672589.mp4?v=0"
+        },
+       {
+          "type": "text",
+          "id": "textv1",
+          "label": "text"
+        }
+      ]
+    },
+    {
+      "type": "second-tab",
+      "name": "second tab",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading2",
+          "label": "Tab Header",
+          "default":"heading 2"
+        },
+        {
+          "type": "text",
+          "id": "headingtitle2",
+          "label": "Header",
+          "default":"heading 2"
+        },
+        {
+          "type": "text",
+          "id": "description2",
+          "label": "Description",
+          "default":"2 Lorem ipsum dolor sit amet. Nam veniam autem quo dolores internos quo veniam quos ex quos nesciunt id voluptate iure aut placeat sapiente eos quia sunt. Quo asperiores molestiae At eligendi tempore et dolor excepturi sed dolorem sunt. Vel galisum dolor ut sint temporibus aut nobis natus qui reiciendis recusandae! 2"
+        },
+        {
+          "type": "text",
+          "id": "video-url2",
+          "label": "video url",
+          "default":"//www.moonpod.co/cdn/shop/videos/c/vp/8652dcfb4ca34bfdb7a55bdc0821f91f/8652dcfb4ca34bfdb7a55bdc0821f91f.HD-1080p-7.2Mbps-39672615.mp4?v=0"
+        },
+       {
+          "type": "text",
+          "id": "textv2",
+          "label": "text"
+        }
+      ]
+    },
+    {
+      "type": "third-tab",
+      "name": "third tab",
+      "limit": 1,
+      "settings": [
+         {
+          "type": "text",
+          "id": "heading3",
+          "label": "Tab Header",
+          "default":"heading 3"
+        },
+       {
+          "type": "text",
+          "id": "headingtitle3",
+          "label": "Header",
+          "default":"heading 3"
+        },
+        {
+          "type": "text",
+          "id": "description3",
+          "label": "Description",
+          "default":"3 Lorem ipsum dolor sit amet. Nam veniam autem quo dolores internos quo veniam quos ex quos nesciunt id voluptate iure aut placeat sapiente eos quia sunt. Quo asperiores molestiae At eligendi tempore et dolor excepturi sed dolorem sunt. Vel galisum dolor ut sint temporibus aut nobis natus qui reiciendis recusandae! 3"
+        },
+        {
+          "type": "text",
+          "id": "video-url3",
+          "label": "video url",
+          "default":"//www.moonpod.co/cdn/shop/videos/c/vp/5bdcdfe3eb454c0baf9fa624443cf5b9/5bdcdfe3eb454c0baf9fa624443cf5b9.HD-1080p-4.8Mbps-39672589.mp4?v=0"
+        },
+       {
+          "type": "text",
+          "id": "textv3",
+          "label": "text"
+        }
+      ]
+    },
+    {
+      "type": "fourth-tab",
+      "name": "fourth tab",
+      "limit": 1,
+      "settings": [
+       {
+          "type": "text",
+          "id": "heading4",
+          "label": "Tab Header",
+          "default":"heading 4"
+        },
+        {
+          "type": "text",
+          "id": "headingtitle4",
+          "label": "Header",
+          "default":"heading 4"
+        },
+         {
+          "type": "text",
+          "id": "description4",
+          "label": "Description",
+          "default":"4 Lorem ipsum dolor sit amet. Nam veniam autem quo dolores internos quo veniam quos ex quos nesciunt id voluptate iure aut placeat sapiente eos quia sunt. Quo asperiores molestiae At eligendi tempore et dolor excepturi sed dolorem sunt. Vel galisum dolor ut sint temporibus aut nobis natus qui reiciendis recusandae! 4"
+        },
+       {
+          "type": "text",
+          "id": "video-url4",
+          "label": "video url",
+          "default":"//www.moonpod.co/cdn/shop/videos/c/vp/8652dcfb4ca34bfdb7a55bdc0821f91f/8652dcfb4ca34bfdb7a55bdc0821f91f.HD-1080p-7.2Mbps-39672615.mp4?v=0"
+        },
+       {
+          "type": "text",
+          "id": "textv4",
+          "label": "text"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Clickable video tabs",
+      "blocks": [
+        {
+          "type": "first-tab"
+        },
+        {
+          "type": "second-tab"
+        },
+        {
+          "type": "third-tab"
+        },
+        {
+          "type": "fourth-tab"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+<div class="container .containerv8 product_tab_sec">
+  <div class="inner-container">
+    <div class="header-text">{{ section.settings.heading-v1 }}</div>
+    <p>{{ section.settings.description-v1 }}</p>
+
+    <div class="golden-capsule-three-col">
+      <div class="item-headings">
+        <div class="items active">
+          <div>
+            
+{% if section.settings.Icon_Image1 != blank %}
+  <img src="{{ section.settings.Icon_Image1 | img_url: 'master' }}" alt="Icon Image 1">
+{% else %}
+  <img src="//www.moonpod.co/cdn/shop/files/Rectangle_372.png?v=1715256659" alt="Default Icon Image">
+{% endif %}
+
+            
+            <span class="feature_desk_heading">
+              {% for block in section.blocks %} 
+              {{block.settings.heading1 | strip }} 
+              {% endfor %}
+            </span>
+          </div>
+          <span class="feature_mob_heading"></span>
+        </div>
+
+        <div class="items ">
+          <div>
+            {% if section.settings.Icon_Image2 != blank %}
+  <img src="{{ section.settings.Icon_Image2 | img_url: 'master' }}" alt="Icon Image 1">
+{% else %}
+  <img src="//www.moonpod.co/cdn/shop/files/Rectangle_373.png?v=1715256658" alt="Default Icon Image">
+{% endif %}
+            <span class="feature_desk_heading">
+              {% for block in section.blocks %} 
+              {{block.settings.heading2 | strip }} 
+              {% endfor %}
+            </span>
+          </div>
+          <span class="feature_mob_heading"></span>
+        </div>
+
+        <div class="items ">
+          <div>
+               {% if section.settings.Icon_Image3 != blank %}
+  <img src="{{ section.settings.Icon_Image3 | img_url: 'master' }}" alt="Icon Image 1">
+{% else %}
+  <img src="//www.moonpod.co/cdn/shop/files/Rectangle_372_1.png?v=1715256658" alt="Default Icon Image">
+{% endif %}
+             <span class="feature_desk_heading">
+              {% for block in section.blocks %} 
+              {{block.settings.heading3 | strip }} 
+              {% endfor %}
+            </span>
+          </div>
+          <span class="feature_mob_heading"></span>
+        </div>
+
+        <div class="items ">
+          <div>
+            
+                           {% if section.settings.Icon_Image4 != blank %}
+  <img src="{{ section.settings.Icon_Image4 | img_url: 'master' }}" alt="Icon Image 1">
+{% else %}
+  <img src="//www.moonpod.co/cdn/shop/files/Rectangle_372_1.png?v=1715256658" alt="Default Icon Image">
+{% endif %}
+            
+            <span class="feature_desk_heading">
+              {% for block in section.blocks %} 
+              {{block.settings.heading4 | strip }} 
+              {% endfor %}
+            </span>
+              
+          </div>
+          <span class="feature_mob_heading"></span>
+        </div>
+      </div>
+      <div class="img_container">
+        <div class="capsule-img active">
+          <video-component data-autoplay="true" data-background="true">
+            <video playsinline="true" class="" autoplay="autoplay" muted="muted" loop="loop" preload="metadata">
+              <source
+                src="{% for block in section.blocks %} 
+              {{block.settings.video-url1 | strip }} 
+              {% endfor %}"
+                type="video/mp4"
+              >
+            </video>
+          </video-component>
+        </div>
+
+        <div class="capsule-img ">
+          <video-component data-autoplay="true" data-background="true">
+            <video playsinline="true" class="" autoplay="autoplay" muted="muted" loop="loop" preload="metadata">
+              <source
+                src="{% for block in section.blocks %} 
+              {{block.settings.video-url2 | strip }} 
+              {% endfor %}"
+                type="video/mp4"
+              >
+            </video>
+          </video-component>
+        </div>
+
+        <div class="capsule-img ">
+          <video-component data-autoplay="true" data-background="true">
+            <video playsinline="true" class="" autoplay="autoplay" muted="muted" loop="loop" preload="metadata">
+              <source
+                src="{% for block in section.blocks %} 
+              {{block.settings.video-url3 | strip }} 
+              {% endfor %}"
+                type="video/mp4"
+              >
+            </video>
+          </video-component>
+        </div>
+
+        <div class="capsule-img ">
+          <video-component data-autoplay="true" data-background="true">
+            <video playsinline="true" class="" autoplay="autoplay" muted="muted" loop="loop" preload="metadata">
+              <source
+                src="{% for block in section.blocks %} 
+              {{block.settings.video-url4 | strip }} 
+              {% endfor %}"
+                type="video/mp4"
+              >
+            </video>
+          </video-component>
+        </div>
+      </div>
+      <div class="text-container">
+        <div class="desc-tab active">
+          <div class="desc-heading">
+              {% for block in section.blocks %} 
+              {{block.settings.headingtitle1 | strip }} 
+              {% endfor %}
+          </div>
+          <div class="desc-para">
+            <p>
+              {% for block in section.blocks %} 
+              {{block.settings.description1 | strip }} 
+              {% endfor %}
+            </p>
+          </div>
+        </div>
+
+        <div class="desc-tab ">
+          <div class="desc-heading">
+              {% for block in section.blocks %} 
+              {{block.settings.headingtitle2 | strip }} 
+              {% endfor %}
+          </div>
+          <div class="desc-para">
+            <p>
+              {% for block in section.blocks %} 
+              {{block.settings.description2 | strip }} 
+              {% endfor %}
+            </p>
+          </div>
+        </div>
+
+        <div class="desc-tab ">
+          <div class="desc-heading">
+              {% for block in section.blocks %} 
+              {{block.settings.headingtitle3 | strip }} 
+              {% endfor %}
+          </div>
+          <div class="desc-para">
+            <p>
+              {% for block in section.blocks %} 
+              {{block.settings.description3 | strip }} 
+              {% endfor %}
+            </p>
+          </div>
+        </div>
+
+        <div class="desc-tab ">
+          <div class="desc-heading">
+              {% for block in section.blocks %} 
+              {{block.settings.headingtitle4 | strip }} 
+              {% endfor %}
+          </div>
+          <div class="desc-para">
+            <p>
+              {% for block in section.blocks %} 
+              {{block.settings.description4 | strip }} 
+              {% endfor %}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style data-shopify="">
+     .category_product_item .card--product .card__media-main-img img, .category_product_item .card--product .card__hover-image img{
+        object-fit: contain;
+     }
+      .immy-capsule{
+    background: #F5F8FF;
+    }
+      @media(min-width:768px){
+
+
+      .product_tab_sec{
+              padding-bottom: 52px !important;
+      }
+         }
+      .product_tab_sec .item-headings .items{
+        display: flex;
+        gap: 8px;
+    }
+      .product_tab_sec .item-headings .items>div{
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+      .product_tab_sec .inner-containerv8 {
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 70px;
+    }
+      .containerv8 .img_container{
+            flex: 37%;
+      }
+
+    .product_tab_sec .header-text {
+        color: var(--soil-1, #3B3D1D);
+        text-align: justify;
+        font-size: 48px;
+        font-style: normal;
+        font-weight: 900;
+        line-height: 48px;
+      margin-bottom:12px;
+    }
+
+    .golden-capsule-three-col {
+        display: flex;
+        align-items: center;
+        gap: 4%;
+    }
+
+    .golden-capsule-three-col .item-headings {
+        flex: 35%;
+    }
+
+    .golden-capsule-three-col .capsule-img {
+        flex: 20%;
+    }
+
+
+    .golden-capsule-three-col .text-container {
+        flex: 35%;
+        padding-left: 5%;
+    }
+
+    .capsule-img {
+        max-height: 409px;
+    }
+
+    .capsule-img img {
+        height: 100%;
+        width: 100%;
+    }
+
+      .product_tab_sec video{
+        max-width: 450px;
+        min-height: 400px;
+        object-fit: cover;
+        border-radius: {{ section.settings.border_radius }}px;
+      }
+
+    .desc-tab {
+        display: none;
+    }
+
+    .desc-tab.active {
+        display: block;
+    }
+
+    .product_tab_sec .item-headings {
+        display: flex;
+        flex-direction: column;
+        gap: 48px;
+    }
+
+    .product_tab_sec .item-headings div span {
+          cursor: pointer;
+        color: {{section.settings.heading_color}};
+        font-size: 24px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: 40px;
+    }
+
+    .product_tab_sec .item-headings div.active span {
+          color: {{section.settings.active_heading_color}};
+        font-size: 27px;
+        font-style: normal;
+        font-weight: 800;
+        line-height: 40px;
+    }
+
+      .golden-capsule-three-col .capsule-img{
+        display:none;
+      }
+        .golden-capsule-three-col .capsule-img.active{
+        display:block;
+      }
+
+
+
+    .product_tab_sec .desc-tab {
+        position: relative;
+      text-align: center;
+    }
+
+
+    .product_tab_sec .desc-tab::before {
+        content: '';
+        background-image: url('https://cdn.shopify.com/s/files/1/0039/5427/8515/files/Group_33837.png?v=1715339079');
+        position: absolute;
+           left: -87px;
+        display: block;
+        top: 50%;
+        transform: translateY(-50%);
+        background-repeat: no-repeat;
+        height: 159px;
+           width: 77px;
+        background-size: 100% 100%;
+    }
+
+      .product_tab_sec .item-headings img{
+            max-width: 30px;
+      }
+
+
+      .golden-capsule-three-col {
+            gap: 25px;
+
+    }
+    .product_tab_sec{
+      padding: 40px 20px;
+    }
+    .product_tab_sec .inner-container{
+           gap: 0px;
+    }
+    .product_tab_sec .header-text{
+         color: {{section.settings.active_heading_color}};
+        text-align: center;
+        font-size: 36px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: 48px;
+    }
+    .product_tab_sec p{
+      color: var(--color-BLACK, #000);
+    text-align: center;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+        text-align: center;
+    }
+    .product_tab_sec .capsule-img img{
+     max-width: 463px;
+    width: 100%;
+    }
+    .product_tab_sec .item-headings {
+        display: flex;
+        flex-direction: column;
+        gap: 40px;
+    }
+      .product_tab_sec .feature_desk_heading:active{
+        color: {{section.settings.active_heading_color}};
+      font-size: 30px;
+      font-style: normal;
+      font-weight: 800;
+      line-height: 40px;
+      }
+
+    /* .product_tab_sec .feature_desk_heading:active{
+      color: #203E5C;
+      /* font-size: 20px; */
+      font-style: normal;
+      font-weight: 800;
+      line-height: 40px;
+    } */
+      .product_tab_sec .item-headings .items.active img {
+        border-radius: 222px;
+        border: 5px solid {{section.settings.active_heading_color}};
+        background: url(<path-to-image>) lightgray -10.025px -12.75px / 144.033% 141.883% no-repeat;
+        /* width: 51px;
+        height: 51px; */
+        max-width: 50px;
+
+    }
+    .product_tab_sec .item-headings img{
+
+    }
+    .product_tab_sec .desc-tab .desc-heading{
+      color: {{section.settings.active_heading_color}};
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 26px; /* 108.333% */
+    }
+    .product_tab_sec .text-containerv8 p{
+      color: #000;
+    text-align: justify;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+          margin-top: 10px;
+    }
+    .product_tab_sec .item-headings .items.active img{
+          max-width: 50px;
+    border-radius: 222px;
+    border: 3px solid {{section.settings.active_heading_color}};
+    background: url(<path-to-image>) lightgray -5.659px -10.029px / 160.211% 173.75% no-repeat;
+    }
+
+     .product_tab_sec .item-headings div.active span {
+          color: {{section.settings.active_heading_color}};
+
+        font-size: 30px;
+        font-style: normal;
+        font-weight: 800;
+        line-height: 40px;
+        }
+
+      @media(min-width:768px){
+       .golden-capsule-three-col {
+        padding: 26px 0px 20px;
+
+    }
+
+    }
+
+      .product_slider {
+            padding-bottom: 40px;
+      }
+     .product_slider a {
+            margin: auto;
+        display: block;
+        max-width: 230px;
+      }
+    @media(max-width:768px){
+      .product_tab_sec .item-headings .items.active img{
+          max-width: 27px;
+          border-radius: 222px;
+          border: 2px solid {{section.settings.active_heading_color}};
+          background: url(<path-to-image>) lightgray -5.659px -10.029px / 160.211% 173.75% no-repeat;
+    }
+  .containerv8 {
+      width: 100%;
+      margin: 0 auto;
+  }
+
+      .product_tab_sec .desc-tab .desc-heading{
+         font-size: 18px;
+        text-align: center;
+      }
+      .product_tab_sec .text-containerv8 p{
+        font-size: 14px;
+        font-style: normal;
+        line-height: normal;
+        text-align: center;
+        margin-top: 8px;
+    }
+      .product_tab_sec {
+        padding: 24px 15px;
+    }
+      .golden-capsule-three-col {
+        gap: 25px;
+            display: grid;
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+      .product_tab_sec .item-headings div span{
+         font-size: 14px!important;
+        font-style: normal;
+        font-weight: 700;
+        line-height: normal!important;
+          -webkit-tap-highlight-color: transparent;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    }
+       .product_tab_sec .item-headings div.active span {
+          color: {{section.settings.active_heading_color}};
+        font-size: 18px!important;
+        font-style: normal;
+        font-weight: 800;
+        line-height: normal!important;
+           -webkit-tap-highlight-color: transparent;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        }
+    }
+    @media screen and (min-width:768px) {
+        .feature_mob_heading {
+            display: none;
+        }
+    }
+
+    @media screen and (max-width:767px) {
+
+        .product_tab_sec .inner-containerv8 {
+            gap: 2px;
+        }
+
+        .product_tab_sec .header-text {
+          font-size: 24px;
+          line-height: normal;
+           font-style: normal;
+          font-weight: 700;
+              word-spacing: unset;
+        }
+
+       .product_tab_sec p{
+          font-size: 14px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: normal;
+        }
+
+        .golden-capsule-three-col {
+            flex-wrap: wrap;
+        }
+        .product_tab_sec .item-headings {
+            gap: 16px;
+        }
+
+        .golden-capsule-three-col .text-container {
+            flex: 100%;
+            padding-left: 0px;
+            margin-top: 80px;
+            grid-column: span 2;
+        }
+
+        .product_tab_sec .desc-tab::before {
+          background-image: url('https://cdn.shopify.com/s/files/1/0039/5427/8515/files/Group_33837.png?v=1715339079');
+            top: -220px;
+            left: 50%;
+            height: 350px;
+            width: 40px;
+            transform: translateX(-50%) rotate(90deg);
+        }
+
+        .product_tab_sec .desc-tab .desc-para {
+            font-size: 14px;
+        }
+      .product_tab_sec video{
+                   max-width: 202px;
+            min-height: 313px;
+      }
+    }
+   @media(min-width:1400px){
+  .containerv8 {
+      width: 75%;
+      margin: 0 auto;
+  }
+</style>
+
+<script>
+  var itemHeadings = document.querySelectorAll('.golden-capsule-three-col .item-headings>div');
+  var textContainers = document.querySelectorAll('.golden-capsule-three-col .text-container div.desc-tab');
+  var imgContainers = document.querySelectorAll('.golden-capsule-three-col .img_container .capsule-img');
+
+  itemHeadings.forEach((heading, index) => {
+    heading.addEventListener('click', () => {
+      itemHeadings.forEach((item) => item.classList.remove('active'));
+      textContainers.forEach((item) => item.classList.remove('active'));
+      imgContainers.forEach((item) => item.classList.remove('active'));
+
+      heading.classList.add('active');
+      imgContainers[index].classList.add('active');
+      textContainers[index].classList.add('active');
+    });
+  });
+</script>

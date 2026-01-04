@@ -1,0 +1,338 @@
+{% doc %}
+  @prompt
+  [User Prompt: Single Testimonial Card with 30/70 mobile split, compact desktop card, strictly flat architecture to fix block nesting error.]
+{% enddoc %}
+
+{% assign ai_gen_id = section.id | replace: '_', '' | downcase %}
+
+{% style %}
+  /* WRAPPER STYLES */
+  .section-wrapper-{{ ai_gen_id }} {
+    background-color: {{ section.settings.section_bg }};
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* CARD STYLES */
+  .testimonial-card-{{ ai_gen_id }} {
+    background-color: {{ section.settings.card_bg }};
+    border-radius: {{ section.settings.card_radius }}px;
+    padding: {{ section.settings.card_padding }}px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+    width: 90%;
+    overflow: hidden;
+  }
+
+  /* LEFT: IMAGE (30%) */
+  .image-container-{{ ai_gen_id }} {
+    flex: 0 0 30%;
+    width: 30%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .author-img-{{ ai_gen_id }} {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    display: block;
+    {% if section.settings.round_image %}
+      border-radius: 50%;
+    {% else %}
+      border-radius: 8px;
+    {% endif %}
+  }
+
+  .placeholder-svg-{{ ai_gen_id }} {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1/1;
+    background: #eee;
+    color: #ccc;
+    {% if section.settings.round_image %}
+      border-radius: 50%;
+    {% else %}
+      border-radius: 8px;
+    {% endif %}
+  }
+
+  /* RIGHT: CONTENT (70%) */
+  .content-container-{{ ai_gen_id }} {
+    flex: 0 0 70%;
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: left;
+  }
+
+  .stars-wrapper-{{ ai_gen_id }} {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 8px;
+  }
+
+  .star-icon-{{ ai_gen_id }} {
+    width: 16px;
+    height: 16px;
+    fill: {{ section.settings.star_color }};
+  }
+
+  .review-text-{{ ai_gen_id }} {
+    color: {{ section.settings.text_color }};
+    font-family: {{ settings.type_body_font.family }};
+    font-weight: 500;
+    line-height: 1.4;
+    margin: 0 0 8px 0;
+    font-style: italic;
+  }
+
+  .author-name-{{ ai_gen_id }} {
+    color: {{ section.settings.text_color }};
+    font-family: {{ settings.type_header_font.family }};
+    font-weight: 700;
+    font-size: 0.9em;
+    opacity: 0.8;
+    margin: 0;
+  }
+
+  /* RESPONSIVENESS */
+  @media screen and (min-width: 750px) {
+    .testimonial-card-{{ ai_gen_id }} {
+      max-width: {{ section.settings.card_max_width }}px;
+    }
+    .review-text-{{ ai_gen_id }} {
+      font-size: {{ section.settings.desktop_text_size }}px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .testimonial-card-{{ ai_gen_id }} {
+      width: 100%;
+      padding: 16px; 
+      gap: 12px;
+    }
+    .review-text-{{ ai_gen_id }} {
+      font-size: {{ section.settings.mobile_text_size }}px;
+    }
+    /* Enforce strict layout on mobile */
+    .image-container-{{ ai_gen_id }} {
+      flex: 0 0 30%;
+      width: 30%;
+    }
+    .content-container-{{ ai_gen_id }} {
+      flex: 0 0 70%;
+      width: 70%;
+    }
+  }
+{% endstyle %}
+
+<div class="section-wrapper-{{ ai_gen_id }}">
+  <div class="testimonial-card-{{ ai_gen_id }}">
+    
+    <div class="image-container-{{ ai_gen_id }}">
+      {% if section.settings.author_image != blank %}
+        {{ section.settings.author_image | image_url: width: 400 | image_tag: 
+          loading: 'lazy', 
+          class: "author-img-" | append: ai_gen_id, 
+          alt: section.settings.author_name 
+        }}
+      {% else %}
+        {{ 'image' | placeholder_svg_tag: 'placeholder-svg-' | append: ai_gen_id | replace: 'class="', 'class="placeholder-svg-' | append: ai_gen_id | append: ' ' }}
+      {% endif %}
+    </div>
+
+    <div class="content-container-{{ ai_gen_id }}">
+      
+      <div class="stars-wrapper-{{ ai_gen_id }}">
+        {% for i in (1..section.settings.star_rating) %}
+          <svg class="star-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+          </svg>
+        {% endfor %}
+      </div>
+
+      {% if section.settings.review_text != blank %}
+        <p class="review-text-{{ ai_gen_id }}">
+          "{{ section.settings.review_text }}"
+        </p>
+      {% endif %}
+
+      {% if section.settings.author_name != blank %}
+        <div class="author-name-{{ ai_gen_id }}">
+          {{ section.settings.author_name }}
+        </div>
+      {% endif %}
+
+    </div>
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Compact Testimonial",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "image_picker",
+      "id": "author_image",
+      "label": "Author Photo"
+    },
+    {
+      "type": "range",
+      "id": "star_rating",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "label": "Star Rating",
+      "default": 5
+    },
+    {
+      "type": "textarea",
+      "id": "review_text",
+      "label": "Review Text",
+      "default": "Voir sa tête quand il s'est reconnu... ça n'a pas de prix ! La qualité est top."
+    },
+    {
+      "type": "text",
+      "id": "author_name",
+      "label": "Author Name",
+      "default": "— Achraf S. (Casablanca)"
+    },
+    {
+      "type": "header",
+      "content": "Layout - Desktop"
+    },
+    {
+      "type": "range",
+      "id": "card_max_width",
+      "min": 300,
+      "max": 800,
+      "step": 10,
+      "unit": "px",
+      "label": "Card Max Width",
+      "default": 500
+    },
+    {
+      "type": "range",
+      "id": "desktop_text_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Text Size",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Layout - Mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_text_size",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Text Size",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Styling"
+    },
+    {
+      "type": "color",
+      "id": "section_bg",
+      "label": "Section Background",
+      "default": "#F5F5F5"
+    },
+    {
+      "type": "color",
+      "id": "card_bg",
+      "label": "Card Background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "star_color",
+      "label": "Star Color",
+      "default": "#FFB800"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#1A1A1A"
+    },
+    {
+      "type": "checkbox",
+      "id": "round_image",
+      "label": "Circular Image",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Card Corner Radius",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "min": 10,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Card Internal Padding",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Section Top Padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Section Bottom Padding",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "Compact Testimonial"
+    }
+  ]
+}
+{% endschema %}
+ 

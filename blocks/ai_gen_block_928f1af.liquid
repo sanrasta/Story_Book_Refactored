@@ -1,0 +1,552 @@
+{% doc %}
+  @prompt
+    Create a custom Shopify Liquid section named "Hero - Text & Image" with the following specifications:
+    
+    1. Section Purpose & Structure
+    
+    Type: A hero section featuring a split-color headline, a subheading, and a single feature image below.
+    
+    Layout: Vertical stack (Headline → Subheading → Image). All content centered.
+    
+    Responsive Behavior: The layout remains vertical on mobile, but sizing and spacing must update based on specific mobile settings defined below.
+    
+    2. Key Elements & Content
+    
+    Headline (Split):
+    
+    Input: Two separate text fields ("Headline Part 1" and "Headline Part 2").
+    
+    Style: Two separate color pickers so each part can be a different color.
+    
+    Subheading:
+    
+    Input: Textarea or Rich Text field.
+    
+    Style: Color picker and adjustable font size.
+    
+    Feature Image:
+    
+    Input: Single image_picker.
+    
+    Desktop Sizing: Range sliders for Desktop Image Width (%) and Desktop Image Height/Max-height (px).
+    
+    Mobile Sizing: Range sliders for Mobile Image Width (%) and Mobile Image Height/Max-height (px).
+    
+    Fit: Select option for object-fit (Cover vs. Contain).
+    
+    3. Advanced Spacing & Layout Controls
+    
+    Container Width: A checkbox/toggle to switch the section between "Full Width" and "Fixed/Page Width".
+    
+    Detailed Spacing (Desktop vs. Mobile):
+    
+    Add specific range sliders to control the vertical space (margin) between:
+    
+    Headline and Subheading.
+    
+    Subheading and Image.
+    
+    Crucial: These margins must have separate settings for Desktop and Mobile to ensure perfect positioning on all devices.
+    
+    Section Padding:
+    
+    Sliders for Top and Bottom section padding (adjustable separately for Desktop and Mobile).
+    
+    4. Design & Style
+    
+    Aesthetic: Modern, minimal, and clean.
+    
+    CSS: Use scoped CSS to prevent conflicts. Ensure transitions are smooth if window is resized.
+    
+    Editor Experience: properly group settings in the schema (e.g., "Typography," "Image Settings," "Spacing - Desktop," "Spacing - Mobile") for a clean user interface., add all text sizing options, for mobile and desktop  
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-hero-text-image-{{ ai_gen_id }} {
+    {% if block.settings.full_width %}
+      width: 100%;
+      max-width: 100%;
+    {% else %}
+      max-width: {{ settings.page_width }}px;
+      margin-left: auto;
+      margin-right: auto;
+      padding-left: 20px;
+      padding-right: 20px;
+    {% endif %}
+    padding-top: {{ block.settings.padding_top_desktop }}px;
+    padding-bottom: {{ block.settings.padding_bottom_desktop }}px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .ai-hero-text-image__headline-{{ ai_gen_id }} {
+    font-family: {{ settings.type_header_font.family }}, {{ settings.type_header_font.fallback_families }};
+    font-weight: {{ settings.type_header_font.weight }};
+    font-size: {{ block.settings.headline_font_size_desktop }}px;
+    line-height: {{ block.settings.headline_line_height_desktop }};
+    letter-spacing: {{ block.settings.headline_letter_spacing }}px;
+    margin: 0;
+    margin-bottom: {{ block.settings.spacing_headline_subheading_desktop }}px;
+  }
+
+  .ai-hero-text-image__headline-part1-{{ ai_gen_id }} {
+    color: {{ block.settings.headline_part1_color }};
+  }
+
+  .ai-hero-text-image__headline-part2-{{ ai_gen_id }} {
+    color: {{ block.settings.headline_part2_color }};
+  }
+
+  .ai-hero-text-image__subheading-{{ ai_gen_id }} {
+    font-family: {{ settings.type_body_font.family }}, {{ settings.type_body_font.fallback_families }};
+    font-size: {{ block.settings.subheading_font_size_desktop }}px;
+    line-height: {{ block.settings.subheading_line_height_desktop }};
+    letter-spacing: {{ block.settings.subheading_letter_spacing }}px;
+    color: {{ block.settings.subheading_color }};
+    margin: 0;
+    margin-bottom: {{ block.settings.spacing_subheading_image_desktop }}px;
+    max-width: 800px;
+  }
+
+  .ai-hero-text-image__image-wrapper-{{ ai_gen_id }} {
+    width: {{ block.settings.image_width_desktop }}%;
+    max-width: 100%;
+  }
+
+  .ai-hero-text-image__image-{{ ai_gen_id }} {
+    width: 100%;
+    height: auto;
+    max-height: {{ block.settings.image_max_height_desktop }}px;
+    object-fit: {{ block.settings.image_fit }};
+    border-radius: {{ settings.media_radius }}px;
+    display: block;
+  }
+
+  .ai-hero-text-image__image-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: {{ block.settings.image_max_height_desktop }}px;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: {{ settings.media_radius }}px;
+  }
+
+  .ai-hero-text-image__image-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    max-width: 400px;
+    max-height: 400px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-hero-text-image-{{ ai_gen_id }} {
+      padding-top: {{ block.settings.padding_top_mobile }}px;
+      padding-bottom: {{ block.settings.padding_bottom_mobile }}px;
+    }
+
+    .ai-hero-text-image__headline-{{ ai_gen_id }} {
+      font-size: {{ block.settings.headline_font_size_mobile }}px;
+      line-height: {{ block.settings.headline_line_height_mobile }};
+      margin-bottom: {{ block.settings.spacing_headline_subheading_mobile }}px;
+    }
+
+    .ai-hero-text-image__subheading-{{ ai_gen_id }} {
+      font-size: {{ block.settings.subheading_font_size_mobile }}px;
+      line-height: {{ block.settings.subheading_line_height_mobile }};
+      margin-bottom: {{ block.settings.spacing_subheading_image_mobile }}px;
+    }
+
+    .ai-hero-text-image__image-wrapper-{{ ai_gen_id }} {
+      width: {{ block.settings.image_width_mobile }}%;
+    }
+
+    .ai-hero-text-image__image-{{ ai_gen_id }} {
+      max-height: {{ block.settings.image_max_height_mobile }}px;
+    }
+
+    .ai-hero-text-image__image-placeholder-{{ ai_gen_id }} {
+      height: {{ block.settings.image_max_height_mobile }}px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-hero-text-image-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  {% if block.settings.headline_part1 != blank or block.settings.headline_part2 != blank %}
+    <h1 class="ai-hero-text-image__headline-{{ ai_gen_id }}">
+      {% if block.settings.headline_part1 != blank %}
+        <span class="ai-hero-text-image__headline-part1-{{ ai_gen_id }}">{{ block.settings.headline_part1 }}</span>
+      {% endif %}
+      {% if block.settings.headline_part2 != blank %}
+        <span class="ai-hero-text-image__headline-part2-{{ ai_gen_id }}">{{ block.settings.headline_part2 }}</span>
+      {% endif %}
+    </h1>
+  {% endif %}
+
+  {% if block.settings.subheading != blank %}
+    <div class="ai-hero-text-image__subheading-{{ ai_gen_id }}">
+      {{ block.settings.subheading }}
+    </div>
+  {% endif %}
+
+  <div class="ai-hero-text-image__image-wrapper-{{ ai_gen_id }}">
+    {% if block.settings.feature_image %}
+      <img
+        src="{{ block.settings.feature_image | image_url: width: 2000 }}"
+        alt="{{ block.settings.feature_image.alt | escape }}"
+        loading="lazy"
+        width="{{ block.settings.feature_image.width }}"
+        height="{{ block.settings.feature_image.height }}"
+        class="ai-hero-text-image__image-{{ ai_gen_id }}"
+      >
+    {% else %}
+      <div class="ai-hero-text-image__image-placeholder-{{ ai_gen_id }}">
+        {{ 'hero-apparel-1' | placeholder_svg_tag }}
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Hero - Text & Image",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width",
+      "default": false,
+      "info": "When enabled, section spans the full browser width"
+    },
+    {
+      "type": "header",
+      "content": "Headline"
+    },
+    {
+      "type": "text",
+      "id": "headline_part1",
+      "label": "Headline part 1",
+      "default": "Discover"
+    },
+    {
+      "type": "color",
+      "id": "headline_part1_color",
+      "label": "Part 1 color",
+      "default": "#0e1210"
+    },
+    {
+      "type": "text",
+      "id": "headline_part2",
+      "label": "Headline part 2",
+      "default": "Your Style"
+    },
+    {
+      "type": "color",
+      "id": "headline_part2_color",
+      "label": "Part 2 color",
+      "default": "#dd1d1d"
+    },
+    {
+      "type": "header",
+      "content": "Headline typography - Desktop"
+    },
+    {
+      "type": "range",
+      "id": "headline_font_size_desktop",
+      "min": 24,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Font size",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "headline_line_height_desktop",
+      "min": 0.8,
+      "max": 2,
+      "step": 0.1,
+      "label": "Line height",
+      "default": 1.2
+    },
+    {
+      "type": "range",
+      "id": "headline_letter_spacing",
+      "min": -2,
+      "max": 4,
+      "step": 0.5,
+      "unit": "px",
+      "label": "Letter spacing",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Headline typography - Mobile"
+    },
+    {
+      "type": "range",
+      "id": "headline_font_size_mobile",
+      "min": 20,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "label": "Font size",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "headline_line_height_mobile",
+      "min": 0.8,
+      "max": 2,
+      "step": 0.1,
+      "label": "Line height",
+      "default": 1.2
+    },
+    {
+      "type": "header",
+      "content": "Subheading"
+    },
+    {
+      "type": "richtext",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "<p>Explore our curated collection of premium products designed to elevate your everyday experience.</p>"
+    },
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Color",
+      "default": "#121212"
+    },
+    {
+      "type": "header",
+      "content": "Subheading typography - Desktop"
+    },
+    {
+      "type": "range",
+      "id": "subheading_font_size_desktop",
+      "min": 12,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Font size",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "subheading_line_height_desktop",
+      "min": 1,
+      "max": 2.5,
+      "step": 0.1,
+      "label": "Line height",
+      "default": 1.6
+    },
+    {
+      "type": "range",
+      "id": "subheading_letter_spacing",
+      "min": -1,
+      "max": 2,
+      "step": 0.1,
+      "unit": "px",
+      "label": "Letter spacing",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Subheading typography - Mobile"
+    },
+    {
+      "type": "range",
+      "id": "subheading_font_size_mobile",
+      "min": 10,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Font size",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "subheading_line_height_mobile",
+      "min": 1,
+      "max": 2.5,
+      "step": 0.1,
+      "label": "Line height",
+      "default": 1.6
+    },
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "feature_image",
+      "label": "Feature image"
+    },
+    {
+      "type": "select",
+      "id": "image_fit",
+      "label": "Image fit",
+      "options": [
+        {
+          "value": "cover",
+          "label": "Cover"
+        },
+        {
+          "value": "contain",
+          "label": "Contain"
+        }
+      ],
+      "default": "cover"
+    },
+    {
+      "type": "header",
+      "content": "Image sizing - Desktop"
+    },
+    {
+      "type": "range",
+      "id": "image_width_desktop",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Width",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "image_max_height_desktop",
+      "min": 200,
+      "max": 1000,
+      "step": 50,
+      "unit": "px",
+      "label": "Max height",
+      "default": 600
+    },
+    {
+      "type": "header",
+      "content": "Image sizing - Mobile"
+    },
+    {
+      "type": "range",
+      "id": "image_width_mobile",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Width",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "image_max_height_mobile",
+      "min": 150,
+      "max": 600,
+      "step": 25,
+      "unit": "px",
+      "label": "Max height",
+      "default": 400
+    },
+    {
+      "type": "header",
+      "content": "Spacing - Desktop"
+    },
+    {
+      "type": "range",
+      "id": "spacing_headline_subheading_desktop",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Headline to subheading",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "spacing_subheading_image_desktop",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Subheading to image",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Section top padding",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Section bottom padding",
+      "default": 60
+    },
+    {
+      "type": "header",
+      "content": "Spacing - Mobile"
+    },
+    {
+      "type": "range",
+      "id": "spacing_headline_subheading_mobile",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Headline to subheading",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "spacing_subheading_image_mobile",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Subheading to image",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Section top padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Section bottom padding",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero - Text & Image"
+    }
+  ]
+}
+{% endschema %}

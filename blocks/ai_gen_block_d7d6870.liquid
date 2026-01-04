@@ -1,0 +1,904 @@
+{% doc %}
+  @prompt
+    Task: Create a custom Shopify Liquid section called "Bento Grid Trust Builder".
+    
+    Layout & Structure:
+    
+    Desktop: Use a CSS Grid "masonry" or "bento box" layout where blocks of different sizes fit together tightly (like a Pinterest board).
+    
+    Mobile: Stack all blocks vertically in a single column.
+    
+    Block System: The layout must be managed entirely by adding/reordering Blocks.
+    
+    Block Types & Settings: Create 3 distinct Block Types:
+    
+    Media Tile (Inside Look):
+    
+    Content: Image upload OR Autoplay Video (MP4) upload. Optional small overlay text caption at the bottom.
+    
+    Grid Settings: Dropdown/radio options to set column span (e.g., "Span 1 col", "Span 2 columns") and row span (e.g., "Span 1 row", "Span 2 rows").
+    
+    Testimonial Tile (Social Proof):
+    
+    Content: Star rating selector (1-5 stars), Quote text area, Author Name text, Optional Author Avatar image.
+    
+    Grid Settings: Dropdown options for column/row span.
+    
+    Stat/Info Tile:
+    
+    Content: Large Heading (e.g., "2,000+"), Subheading (e.g., "on waitlist").
+    
+    Grid Settings: Dropdown options for column/row span.
+    
+    Mandatory Schema Customization (CRITICAL): You must include schema settings for ALL the following to ensure full control:
+    
+    Section Spacing: Range sliders for Section Top/Bottom Padding & Margins (separate for Desktop & Mobile). Range slider for the "Grid Gap" (gutter space between tiles).
+    
+    Tile Styling: Range slider for "Tile Border Radius" (rounded corners). Checkbox for "Drop Shadow" on tiles.
+    
+    Typography Sizing: Range sliders for font sizes of: Testimonial Quote, Author Name, Media Caption, and Stat Heading (separate Desktop/Mobile sliders where appropriate).
+    
+    Colors: Color pickers for: Section Background, Tile Background (default color), Text Color, Star Rating Color, and Border Color.
+    
+    Content Alignment: Options for text alignment within tiles (Left, Center).
+    
+    Design Aesthetic: Modern, clean, with ample white space and rounded corners on the tiles to feel organic and friendly. Use sans-serif fonts.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-bento-grid-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    background-color: {{ block.settings.section_bg_color }};
+    padding: {{ block.settings.section_padding_top_mobile }}px 20px {{ block.settings.section_padding_bottom_mobile }}px;
+    margin-top: {{ block.settings.section_margin_top_mobile }}px;
+    margin-bottom: {{ block.settings.section_margin_bottom_mobile }}px;
+  }
+
+  .ai-bento-grid__container-{{ ai_gen_id }} {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .ai-bento-grid__grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: {{ block.settings.grid_gap }}px;
+  }
+
+  .ai-bento-grid__tile-{{ ai_gen_id }} {
+    background-color: {{ block.settings.tile_bg_color }};
+    border-radius: {{ block.settings.tile_border_radius }}px;
+    overflow: hidden;
+    position: relative;
+    min-height: 200px;
+    {% if block.settings.tile_drop_shadow %}
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    {% endif %}
+  }
+
+  .ai-bento-grid__media-tile-{{ ai_gen_id }} {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .ai-bento-grid__media-image-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .ai-bento-grid__media-video-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .ai-bento-grid__media-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-bento-grid__media-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    max-width: 200px;
+    max-height: 200px;
+  }
+
+  .ai-bento-grid__media-caption-{{ ai_gen_id }} {
+    position: relative;
+    z-index: 2;
+    padding: 16px 20px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
+    color: #ffffff;
+    font-size: {{ block.settings.caption_font_size_mobile }}px;
+    text-align: {{ block.settings.content_alignment }};
+  }
+
+  .ai-bento-grid__testimonial-tile-{{ ai_gen_id }} {
+    padding: 32px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    text-align: {{ block.settings.content_alignment }};
+  }
+
+  .ai-bento-grid__stars-{{ ai_gen_id }} {
+    display: flex;
+    gap: 4px;
+    {% if block.settings.content_alignment == 'center' %}
+      justify-content: center;
+    {% endif %}
+  }
+
+  .ai-bento-grid__star-{{ ai_gen_id }} {
+    width: 20px;
+    height: 20px;
+    fill: {{ block.settings.star_color }};
+  }
+
+  .ai-bento-grid__quote-{{ ai_gen_id }} {
+    font-size: {{ block.settings.quote_font_size_mobile }}px;
+    line-height: 1.5;
+    color: {{ block.settings.text_color }};
+    margin: 0;
+  }
+
+  .ai-bento-grid__author-wrapper-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: auto;
+    {% if block.settings.content_alignment == 'center' %}
+      justify-content: center;
+    {% endif %}
+  }
+
+  .ai-bento-grid__author-avatar-{{ ai_gen_id }} {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .ai-bento-grid__author-avatar-placeholder-{{ ai_gen_id }} {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-bento-grid__author-avatar-placeholder-{{ ai_gen_id }} svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .ai-bento-grid__author-name-{{ ai_gen_id }} {
+    font-size: {{ block.settings.author_font_size_mobile }}px;
+    color: {{ block.settings.text_color }};
+    font-weight: 600;
+  }
+
+  .ai-bento-grid__stat-tile-{{ ai_gen_id }} {
+    padding: 32px 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 8px;
+    text-align: {{ block.settings.content_alignment }};
+  }
+
+  .ai-bento-grid__stat-heading-{{ ai_gen_id }} {
+    font-size: {{ block.settings.stat_heading_font_size_mobile }}px;
+    font-weight: 700;
+    color: {{ block.settings.text_color }};
+    margin: 0;
+    line-height: 1.1;
+  }
+
+  .ai-bento-grid__stat-subheading-{{ ai_gen_id }} {
+    font-size: 16px;
+    color: {{ block.settings.text_color }};
+    opacity: 0.8;
+    margin: 0;
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-bento-grid-{{ ai_gen_id }} {
+      padding-top: {{ block.settings.section_padding_top_desktop }}px;
+      padding-bottom: {{ block.settings.section_padding_bottom_desktop }}px;
+      margin-top: {{ block.settings.section_margin_top_desktop }}px;
+      margin-bottom: {{ block.settings.section_margin_bottom_desktop }}px;
+    }
+
+    .ai-bento-grid__grid-{{ ai_gen_id }} {
+      grid-template-columns: repeat(4, 1fr);
+      grid-auto-rows: 200px;
+    }
+
+    .ai-bento-grid__tile-{{ ai_gen_id }}[data-col-span="1"] {
+      grid-column: span 1;
+    }
+
+    .ai-bento-grid__tile-{{ ai_gen_id }}[data-col-span="2"] {
+      grid-column: span 2;
+    }
+
+    .ai-bento-grid__tile-{{ ai_gen_id }}[data-col-span="3"] {
+      grid-column: span 3;
+    }
+
+    .ai-bento-grid__tile-{{ ai_gen_id }}[data-col-span="4"] {
+      grid-column: span 4;
+    }
+
+    .ai-bento-grid__tile-{{ ai_gen_id }}[data-row-span="1"] {
+      grid-row: span 1;
+    }
+
+    .ai-bento-grid__tile-{{ ai_gen_id }}[data-row-span="2"] {
+      grid-row: span 2;
+    }
+
+    .ai-bento-grid__tile-{{ ai_gen_id }}[data-row-span="3"] {
+      grid-row: span 3;
+    }
+
+    .ai-bento-grid__media-caption-{{ ai_gen_id }} {
+      font-size: {{ block.settings.caption_font_size_desktop }}px;
+    }
+
+    .ai-bento-grid__quote-{{ ai_gen_id }} {
+      font-size: {{ block.settings.quote_font_size_desktop }}px;
+    }
+
+    .ai-bento-grid__author-name-{{ ai_gen_id }} {
+      font-size: {{ block.settings.author_font_size_desktop }}px;
+    }
+
+    .ai-bento-grid__stat-heading-{{ ai_gen_id }} {
+      font-size: {{ block.settings.stat_heading_font_size_desktop }}px;
+    }
+  }
+{% endstyle %}
+
+<bento-grid-{{ ai_gen_id }} class="ai-bento-grid-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-bento-grid__container-{{ ai_gen_id }}">
+    <div class="ai-bento-grid__grid-{{ ai_gen_id }}">
+      {% liquid
+        assign media_image = block.settings.media_image
+        assign media_video = block.settings.media_video
+        assign media_caption = block.settings.media_caption
+        assign media_col_span = block.settings.media_col_span
+        assign media_row_span = block.settings.media_row_span
+
+        assign testimonial_star_rating = block.settings.testimonial_star_rating
+        assign testimonial_quote = block.settings.testimonial_quote
+        assign testimonial_author_name = block.settings.testimonial_author_name
+        assign testimonial_author_avatar = block.settings.testimonial_author_avatar
+        assign testimonial_col_span = block.settings.testimonial_col_span
+        assign testimonial_row_span = block.settings.testimonial_row_span
+
+        assign stat_heading = block.settings.stat_heading
+        assign stat_subheading = block.settings.stat_subheading
+        assign stat_col_span = block.settings.stat_col_span
+        assign stat_row_span = block.settings.stat_row_span
+      %}
+
+      {% if block.settings.show_media_tile %}
+        <div
+          class="ai-bento-grid__tile-{{ ai_gen_id }} ai-bento-grid__media-tile-{{ ai_gen_id }}"
+          data-col-span="{{ media_col_span }}"
+          data-row-span="{{ media_row_span }}"
+        >
+          {% if media_video != blank %}
+            <video
+              class="ai-bento-grid__media-video-{{ ai_gen_id }}"
+              autoplay
+              muted
+              loop
+              playsinline
+            >
+              <source src="{{ media_video }}" type="video/mp4">
+            </video>
+          {% elsif media_image != blank %}
+            <img
+              src="{{ media_image | image_url: width: 1000 }}"
+              alt="{{ media_image.alt | escape }}"
+              class="ai-bento-grid__media-image-{{ ai_gen_id }}"
+              loading="lazy"
+              width="{{ media_image.width }}"
+              height="{{ media_image.height }}"
+            >
+          {% else %}
+            <div class="ai-bento-grid__media-placeholder-{{ ai_gen_id }}">
+              {{ 'image' | placeholder_svg_tag }}
+            </div>
+          {% endif %}
+
+          {% if media_caption != blank %}
+            <div class="ai-bento-grid__media-caption-{{ ai_gen_id }}">
+              {{ media_caption }}
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {% if block.settings.show_testimonial_tile %}
+        <div
+          class="ai-bento-grid__tile-{{ ai_gen_id }} ai-bento-grid__testimonial-tile-{{ ai_gen_id }}"
+          data-col-span="{{ testimonial_col_span }}"
+          data-row-span="{{ testimonial_row_span }}"
+        >
+          <div class="ai-bento-grid__stars-{{ ai_gen_id }}">
+            {% for i in (1..testimonial_star_rating) %}
+              <svg class="ai-bento-grid__star-{{ ai_gen_id }}" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+            {% endfor %}
+          </div>
+
+          {% if testimonial_quote != blank %}
+            <p class="ai-bento-grid__quote-{{ ai_gen_id }}">{{ testimonial_quote }}</p>
+          {% endif %}
+
+          {% if testimonial_author_name != blank %}
+            <div class="ai-bento-grid__author-wrapper-{{ ai_gen_id }}">
+              {% if testimonial_author_avatar != blank %}
+                <img
+                  src="{{ testimonial_author_avatar | image_url: width: 80 }}"
+                  alt="{{ testimonial_author_name | escape }}"
+                  class="ai-bento-grid__author-avatar-{{ ai_gen_id }}"
+                  loading="lazy"
+                  width="40"
+                  height="40"
+                >
+              {% else %}
+                <div class="ai-bento-grid__author-avatar-placeholder-{{ ai_gen_id }}">
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="8" r="4" fill="currentColor"/>
+                    <path d="M4 20c0-4 3.5-6 8-6s8 2 8 6" stroke="currentColor" stroke-width="2"/>
+                  </svg>
+                </div>
+              {% endif %}
+              <div class="ai-bento-grid__author-name-{{ ai_gen_id }}">{{ testimonial_author_name }}</div>
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {% if block.settings.show_stat_tile %}
+        <div
+          class="ai-bento-grid__tile-{{ ai_gen_id }} ai-bento-grid__stat-tile-{{ ai_gen_id }}"
+          data-col-span="{{ stat_col_span }}"
+          data-row-span="{{ stat_row_span }}"
+        >
+          {% if stat_heading != blank %}
+            <h3 class="ai-bento-grid__stat-heading-{{ ai_gen_id }}">{{ stat_heading }}</h3>
+          {% endif %}
+
+          {% if stat_subheading != blank %}
+            <p class="ai-bento-grid__stat-subheading-{{ ai_gen_id }}">{{ stat_subheading }}</p>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</bento-grid-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class BentoGrid{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.initializeVideos();
+      }
+
+      initializeVideos() {
+        const videos = this.querySelectorAll('.ai-bento-grid__media-video-{{ ai_gen_id }}');
+        videos.forEach(video => {
+          video.play().catch(() => {});
+        });
+      }
+    }
+
+    customElements.define('bento-grid-{{ ai_gen_id }}', BentoGrid{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Bento grid trust builder",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top_desktop",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Desktop top padding",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom_desktop",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Desktop bottom padding",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Mobile top padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Mobile bottom padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "section_margin_top_desktop",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Desktop top margin",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "section_margin_bottom_desktop",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Desktop bottom margin",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "section_margin_top_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Mobile top margin",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "section_margin_bottom_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Mobile bottom margin",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "min": 5,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Grid gap",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Tile styling"
+    },
+    {
+      "type": "range",
+      "id": "tile_border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Tile border radius",
+      "default": 16
+    },
+    {
+      "type": "checkbox",
+      "id": "tile_drop_shadow",
+      "label": "Drop shadow",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "quote_font_size_desktop",
+      "min": 14,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Testimonial quote size (desktop)",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "quote_font_size_mobile",
+      "min": 12,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Testimonial quote size (mobile)",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "author_font_size_desktop",
+      "min": 12,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Author name size (desktop)",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "author_font_size_mobile",
+      "min": 10,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Author name size (mobile)",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "caption_font_size_desktop",
+      "min": 12,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Media caption size (desktop)",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "caption_font_size_mobile",
+      "min": 10,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Media caption size (mobile)",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "stat_heading_font_size_desktop",
+      "min": 24,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Stat heading size (desktop)",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "stat_heading_font_size_mobile",
+      "min": 20,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Stat heading size (mobile)",
+      "default": 36
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "section_bg_color",
+      "label": "Section background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "tile_bg_color",
+      "label": "Tile background",
+      "default": "#f8f8f8"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "star_color",
+      "label": "Star rating color",
+      "default": "#FFB800"
+    },
+    {
+      "type": "header",
+      "content": "Content alignment"
+    },
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "Media tile"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_media_tile",
+      "label": "Show media tile",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "media_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "media_video",
+      "label": "Video URL",
+      "info": "Upload MP4 video to Files and paste URL here"
+    },
+    {
+      "type": "text",
+      "id": "media_caption",
+      "label": "Caption"
+    },
+    {
+      "type": "select",
+      "id": "media_col_span",
+      "label": "Column span",
+      "options": [
+        {
+          "value": "1",
+          "label": "1 column"
+        },
+        {
+          "value": "2",
+          "label": "2 columns"
+        },
+        {
+          "value": "3",
+          "label": "3 columns"
+        },
+        {
+          "value": "4",
+          "label": "4 columns"
+        }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "select",
+      "id": "media_row_span",
+      "label": "Row span",
+      "options": [
+        {
+          "value": "1",
+          "label": "1 row"
+        },
+        {
+          "value": "2",
+          "label": "2 rows"
+        },
+        {
+          "value": "3",
+          "label": "3 rows"
+        }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "header",
+      "content": "Testimonial tile"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_testimonial_tile",
+      "label": "Show testimonial tile",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "testimonial_star_rating",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "label": "Star rating",
+      "default": 5
+    },
+    {
+      "type": "textarea",
+      "id": "testimonial_quote",
+      "label": "Quote",
+      "default": "This product exceeded my expectations. Highly recommend!"
+    },
+    {
+      "type": "text",
+      "id": "testimonial_author_name",
+      "label": "Author name",
+      "default": "Sarah M."
+    },
+    {
+      "type": "image_picker",
+      "id": "testimonial_author_avatar",
+      "label": "Author avatar"
+    },
+    {
+      "type": "select",
+      "id": "testimonial_col_span",
+      "label": "Column span",
+      "options": [
+        {
+          "value": "1",
+          "label": "1 column"
+        },
+        {
+          "value": "2",
+          "label": "2 columns"
+        },
+        {
+          "value": "3",
+          "label": "3 columns"
+        },
+        {
+          "value": "4",
+          "label": "4 columns"
+        }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "select",
+      "id": "testimonial_row_span",
+      "label": "Row span",
+      "options": [
+        {
+          "value": "1",
+          "label": "1 row"
+        },
+        {
+          "value": "2",
+          "label": "2 rows"
+        },
+        {
+          "value": "3",
+          "label": "3 rows"
+        }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "header",
+      "content": "Stat tile"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_stat_tile",
+      "label": "Show stat tile",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "stat_heading",
+      "label": "Heading",
+      "default": "2,000+"
+    },
+    {
+      "type": "text",
+      "id": "stat_subheading",
+      "label": "Subheading",
+      "default": "Happy customers"
+    },
+    {
+      "type": "select",
+      "id": "stat_col_span",
+      "label": "Column span",
+      "options": [
+        {
+          "value": "1",
+          "label": "1 column"
+        },
+        {
+          "value": "2",
+          "label": "2 columns"
+        },
+        {
+          "value": "3",
+          "label": "3 columns"
+        },
+        {
+          "value": "4",
+          "label": "4 columns"
+        }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "select",
+      "id": "stat_row_span",
+      "label": "Row span",
+      "options": [
+        {
+          "value": "1",
+          "label": "1 row"
+        },
+        {
+          "value": "2",
+          "label": "2 rows"
+        },
+        {
+          "value": "3",
+          "label": "3 rows"
+        }
+      ],
+      "default": "1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Bento grid trust builder"
+    }
+  ]
+}
+{% endschema %}

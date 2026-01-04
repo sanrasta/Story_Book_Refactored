@@ -1,0 +1,529 @@
+{% doc %}
+  @prompt
+    Create a Shopify section that adds a sticky button to the bottom of the screen with the following requirements:
+    
+    ⚙️ Functionality
+    	•	The button appears only after the user scrolls 20% down the page (make the percentage adjustable in the theme editor).
+    	•	Once visible, the button stays fixed at the bottom of the viewport on both desktop and mobile.
+    	•	The button disappears again when scrolling back above the trigger point.
+    	•	The button links to a customizable URL or popup ID (editable in the theme editor).
+    
+    🧩 Design & Layout
+    	•	The button should be centered horizontally at the bottom.
+    	•	Adjustable settings in the editor for:
+    	•	Button text
+    	•	Link or popup ID
+    	•	Background color
+    	•	Text color
+    	•	Padding
+    	•	Border radius
+    	•	Font size
+    	•	Optional toggle to add a shadow or glow effect for visibility.
+    	•	Responsive design — ensure it fits neatly above the mobile nav bar.
+    
+    🪄 Extras
+    	•	Smooth fade-in and fade-out animation when appearing/disappearing.
+    	•	Optional setting to make the button span full width or stay centered with max width (both adjustable)., Add optional attention-grabbing animations to the sticky button (make them toggleable via simple settings or code comments):
+    	•	Option 1: Light horizontal “shake” every 6 seconds.
+    	•	Option 2: Gentle “pulse” effect (scale up to 1.05x) that repeats slowly.
+    	•	Option 3: Soft glowing or shining border effect every 10 seconds.
+    Each effect should be smooth, subtle, and mobile-friendly.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-sticky-button-{{ ai_gen_id }} {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+    transition: opacity 0.4s ease, visibility 0.4s ease, transform 0.4s ease;
+    pointer-events: none;
+    padding: {{ block.settings.bottom_spacing }}px {{ block.settings.side_spacing }}px;
+  }
+
+  .ai-sticky-button-{{ ai_gen_id }}.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .ai-sticky-button-wrapper-{{ ai_gen_id }} {
+    {% if block.settings.full_width %}
+      width: 100%;
+      max-width: {{ block.settings.max_width }}px;
+    {% else %}
+      width: auto;
+      max-width: {{ block.settings.max_width }}px;
+    {% endif %}
+    margin: 0 auto;
+  }
+
+  .ai-sticky-button-link-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: {{ block.settings.button_padding_vertical }}px {{ block.settings.button_padding_horizontal }}px;
+    background-color: {{ block.settings.button_bg_color }};
+    color: {{ block.settings.button_text_color }};
+    text-decoration: none;
+    border-radius: {{ block.settings.border_radius }}px;
+    font-size: {{ block.settings.font_size }}px;
+    font-weight: 600;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 2px solid transparent;
+    position: relative;
+    {% if block.settings.enable_shadow %}
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    {% endif %}
+    {% if block.settings.enable_glow %}
+      box-shadow: 0 0 20px {{ block.settings.button_bg_color }}80;
+    {% endif %}
+  }
+
+  .ai-sticky-button-link-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_bg_color }};
+    color: {{ block.settings.button_hover_text_color }};
+    transform: translateY(-2px);
+    {% if block.settings.enable_shadow %}
+      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
+    {% endif %}
+    {% if block.settings.enable_glow %}
+      box-shadow: 0 0 30px {{ block.settings.button_hover_bg_color }}80;
+    {% endif %}
+  }
+
+  {% if block.settings.animation_type == 'shake' %}
+    @keyframes ai-shake-{{ ai_gen_id }} {
+      0%, 100% {
+        transform: translateX(0);
+      }
+      10%, 30%, 50%, 70%, 90% {
+        transform: translateX(-4px);
+      }
+      20%, 40%, 60%, 80% {
+        transform: translateX(4px);
+      }
+    }
+
+    .ai-sticky-button-{{ ai_gen_id }}.visible .ai-sticky-button-link-{{ ai_gen_id }} {
+      animation: ai-shake-{{ ai_gen_id }} 0.6s ease-in-out 6s infinite;
+    }
+
+    .ai-sticky-button-{{ ai_gen_id }}.visible .ai-sticky-button-link-{{ ai_gen_id }}:hover {
+      animation: none;
+    }
+  {% endif %}
+
+  {% if block.settings.animation_type == 'pulse' %}
+    @keyframes ai-pulse-{{ ai_gen_id }} {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+    }
+
+    .ai-sticky-button-{{ ai_gen_id }}.visible .ai-sticky-button-link-{{ ai_gen_id }} {
+      animation: ai-pulse-{{ ai_gen_id }} 2s ease-in-out infinite;
+    }
+
+    .ai-sticky-button-{{ ai_gen_id }}.visible .ai-sticky-button-link-{{ ai_gen_id }}:hover {
+      animation: none;
+      transform: translateY(-2px) scale(1);
+    }
+  {% endif %}
+
+  {% if block.settings.animation_type == 'glow_border' %}
+    @keyframes ai-glow-border-{{ ai_gen_id }} {
+      0%, 100% {
+        border-color: transparent;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      }
+      5% {
+        border-color: {{ block.settings.glow_border_color }};
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), 0 0 15px {{ block.settings.glow_border_color }}80, inset 0 0 10px {{ block.settings.glow_border_color }}40;
+      }
+      15% {
+        border-color: transparent;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      }
+    }
+
+    .ai-sticky-button-{{ ai_gen_id }}.visible .ai-sticky-button-link-{{ ai_gen_id }} {
+      animation: ai-glow-border-{{ ai_gen_id }} 10s ease-in-out infinite;
+    }
+
+    .ai-sticky-button-{{ ai_gen_id }}.visible .ai-sticky-button-link-{{ ai_gen_id }}:hover {
+      animation: none;
+    }
+  {% endif %}
+
+  @media screen and (max-width: 749px) {
+    .ai-sticky-button-{{ ai_gen_id }} {
+      padding: {{ block.settings.mobile_bottom_spacing }}px {{ block.settings.mobile_side_spacing }}px;
+    }
+
+    .ai-sticky-button-link-{{ ai_gen_id }} {
+      font-size: {{ block.settings.mobile_font_size }}px;
+      padding: {{ block.settings.mobile_button_padding_vertical }}px {{ block.settings.mobile_button_padding_horizontal }}px;
+    }
+
+    {% if block.settings.animation_type == 'shake' %}
+      @keyframes ai-shake-{{ ai_gen_id }} {
+        0%, 100% {
+          transform: translateX(0);
+        }
+        10%, 30%, 50%, 70%, 90% {
+          transform: translateX(-3px);
+        }
+        20%, 40%, 60%, 80% {
+          transform: translateX(3px);
+        }
+      }
+    {% endif %}
+
+    {% if block.settings.animation_type == 'pulse' %}
+      @keyframes ai-pulse-{{ ai_gen_id }} {
+        0%, 100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.03);
+        }
+      }
+    {% endif %}
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ai-sticky-button-{{ ai_gen_id }}.visible .ai-sticky-button-link-{{ ai_gen_id }} {
+      animation: none !important;
+    }
+  }
+{% endstyle %}
+
+<sticky-scroll-button-{{ ai_gen_id }}
+  class="ai-sticky-button-{{ ai_gen_id }}"
+  data-scroll-threshold="{{ block.settings.scroll_threshold }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-sticky-button-wrapper-{{ ai_gen_id }}">
+    <a
+      href="{{ block.settings.button_link }}"
+      class="ai-sticky-button-link-{{ ai_gen_id }}"
+    >
+      {{ block.settings.button_text }}
+    </a>
+  </div>
+</sticky-scroll-button-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class StickyScrollButton{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.scrollThreshold = parseFloat(this.dataset.scrollThreshold) || 20;
+        this.isVisible = false;
+      }
+
+      connectedCallback() {
+        this.handleScroll = this.handleScroll.bind(this);
+        window.addEventListener('scroll', this.handleScroll, { passive: true });
+        this.handleScroll();
+      }
+
+      disconnectedCallback() {
+        window.removeEventListener('scroll', this.handleScroll);
+      }
+
+      handleScroll() {
+        const scrollPercentage = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+        const shouldShow = scrollPercentage >= this.scrollThreshold;
+
+        if (shouldShow && !this.isVisible) {
+          this.classList.add('visible');
+          this.isVisible = true;
+        } else if (!shouldShow && this.isVisible) {
+          this.classList.remove('visible');
+          this.isVisible = false;
+        }
+      }
+    }
+
+    customElements.define('sticky-scroll-button-{{ ai_gen_id }}', StickyScrollButton{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Sticky scroll button",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Button content"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Scroll behavior"
+    },
+    {
+      "type": "range",
+      "id": "scroll_threshold",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Show after scrolling",
+      "default": 20,
+      "info": "Button appears after scrolling this percentage down the page"
+    },
+    {
+      "type": "header",
+      "content": "Button style"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Background color",
+      "default": "#0e1210"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_bg_color",
+      "label": "Hover background color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_text_color",
+      "label": "Hover text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 18
+    },
+    {
+      "type": "header",
+      "content": "Button padding"
+    },
+    {
+      "type": "range",
+      "id": "button_padding_vertical",
+      "min": 8,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Top and bottom padding",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "button_padding_horizontal",
+      "min": 16,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Left and right padding",
+      "default": 32
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width button",
+      "default": false,
+      "info": "Button spans full width up to max width setting"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 200,
+      "max": 800,
+      "step": 20,
+      "unit": "px",
+      "label": "Maximum width",
+      "default": 400
+    },
+    {
+      "type": "range",
+      "id": "bottom_spacing",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom spacing",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "side_spacing",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "label": "Side spacing",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Effects"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_shadow",
+      "label": "Enable shadow",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_glow",
+      "label": "Enable glow effect",
+      "default": false,
+      "info": "Adds a colored glow around the button"
+    },
+    {
+      "type": "header",
+      "content": "Attention animations"
+    },
+    {
+      "type": "select",
+      "id": "animation_type",
+      "label": "Animation style",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "shake",
+          "label": "Shake (every 6 seconds)"
+        },
+        {
+          "value": "pulse",
+          "label": "Pulse (continuous)"
+        },
+        {
+          "value": "glow_border",
+          "label": "Glowing border (every 10 seconds)"
+        }
+      ],
+      "default": "none",
+      "info": "Subtle animations to grab attention. Pauses on hover."
+    },
+    {
+      "type": "color",
+      "id": "glow_border_color",
+      "label": "Glow border color",
+      "default": "#ffffff",
+      "info": "Only applies to glowing border animation"
+    },
+    {
+      "type": "header",
+      "content": "Mobile settings"
+    },
+    {
+      "type": "range",
+      "id": "mobile_font_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "mobile_button_padding_vertical",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Top and bottom padding",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "mobile_button_padding_horizontal",
+      "min": 16,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "label": "Left and right padding",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "mobile_bottom_spacing",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Bottom spacing",
+      "default": 16,
+      "info": "Space above mobile navigation bar"
+    },
+    {
+      "type": "range",
+      "id": "mobile_side_spacing",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Side spacing",
+      "default": 16
+    }
+  ],
+  "presets": [
+    {
+      "name": "Sticky scroll button"
+    }
+  ]
+}
+{% endschema %}

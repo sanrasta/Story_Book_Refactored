@@ -1,0 +1,1042 @@
+{% doc %}
+  @prompt
+    Here is a compressed version that fits easily into a single chat message but keeps all the technical details and the 7 specific cards.
+    
+    Copy & Paste This Prompt:
+    Create a "Theme Card Slider" Shopify section.
+    
+    1. Layout & Behavior:
+    
+    Desktop: Responsive Grid (customizable columns).
+    
+    Mobile: Horizontal Scroll/Carousel. Crucial: Set width to show 1.2 to 1.5 cards (peeking effect) with CSS scroll-snapping.
+    
+    Card Design: Vertical orientation with Cover Image, Badge (floating/top), and Title (bottom).
+    
+    2. Customization (High Priority):
+    
+    Do not hardcode sizes. Add Schema settings for: Section margins/padding (mobile/desktop), Grid gaps, Image aspect ratio, Border radius, Font sizes (Title/Badge), and Colors (Backgrounds, Text, Badges, Arrows/Dots).
+    
+    3. Default Content (Create 7 Blocks): Pre-fill with these themes:
+    
+    Dinosaures (Tag: 🌟 Unisexe)
+    
+    Princesse (Tag: 🌸 Fille)
+    
+    Espace (Tag: 🌟 Unisexe)
+    
+    Animaux (Tag: 🌟 Unisexe)
+    
+    Super-Héros (Tag: 🌟 Unisexe)
+    
+    Voyage (Tag: 🌟 Unisexe)
+    
+    Football (Tag: 🌟 Unisexe)
+    
+    4. Style: Modern, minimal, sans-serif typography, and smooth transitions., add where i can add the image in the blocks and make it 7 blocks, mobile columns are not showing 2 when i option to show 2,make sure there's an option to show 2 column in mobile and another whichs shows 1 and another one shows first and half of second, put them as option. and add a hovering arrows for scrolling through the cards, add major headline for all this section with adjusted padding and spacing from the grids, and show also preview of the right arrow for them to know its a slider
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-theme-card-slider-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding: {{ block.settings.section_padding_top_mobile }}px {{ block.settings.section_padding_horizontal_mobile }}px {{ block.settings.section_padding_bottom_mobile }}px;
+    position: relative;
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-theme-card-slider-{{ ai_gen_id }} {
+      padding: {{ block.settings.section_padding_top_desktop }}px {{ block.settings.section_padding_horizontal_desktop }}px {{ block.settings.section_padding_bottom_desktop }}px;
+    }
+  }
+
+  .ai-theme-card-slider__header-{{ ai_gen_id }} {
+    margin-bottom: {{ block.settings.heading_spacing_mobile }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-theme-card-slider__header-{{ ai_gen_id }} {
+      margin-bottom: {{ block.settings.heading_spacing_desktop }}px;
+    }
+  }
+
+  .ai-theme-card-slider__heading-{{ ai_gen_id }} {
+    font-family: var(--font-heading-family);
+    font-size: {{ block.settings.heading_font_size_mobile }}px;
+    font-weight: 700;
+    color: {{ block.settings.heading_color }};
+    margin: 0;
+    text-align: {{ block.settings.heading_alignment }};
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-theme-card-slider__heading-{{ ai_gen_id }} {
+      font-size: {{ block.settings.heading_font_size_desktop }}px;
+    }
+  }
+
+  .ai-theme-card-slider__container-{{ ai_gen_id }} {
+    position: relative;
+  }
+
+  .ai-theme-card-slider__grid-{{ ai_gen_id }} {
+    display: grid;
+    gap: {{ block.settings.grid_gap_mobile }}px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .ai-theme-card-slider__grid-{{ ai_gen_id }}::-webkit-scrollbar {
+    display: none;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-theme-card-slider__grid-{{ ai_gen_id }} {
+      {% if block.settings.mobile_layout == '1_column' %}
+        grid-auto-flow: column;
+        grid-auto-columns: 100%;
+      {% elsif block.settings.mobile_layout == '2_columns' %}
+        grid-template-columns: repeat(2, 1fr);
+        overflow-x: visible;
+        scroll-snap-type: none;
+      {% elsif block.settings.mobile_layout == 'peek' %}
+        grid-auto-flow: column;
+        grid-auto-columns: 80%;
+        padding-right: {{ block.settings.section_padding_horizontal_mobile }}px;
+      {% endif %}
+    }
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-theme-card-slider__grid-{{ ai_gen_id }} {
+      grid-template-columns: repeat({{ block.settings.columns_desktop }}, 1fr);
+      gap: {{ block.settings.grid_gap_desktop }}px;
+      overflow-x: visible;
+      scroll-snap-type: none;
+    }
+  }
+
+  .ai-theme-card-{{ ai_gen_id }} {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background-color: {{ block.settings.card_background_color }};
+    border-radius: {{ block.settings.border_radius }}px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    scroll-snap-align: start;
+    min-width: 0;
+  }
+
+  .ai-theme-card-{{ ai_gen_id }}:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+
+  .ai-theme-card__image-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    padding-bottom: {{ block.settings.image_aspect_ratio }}%;
+    overflow: hidden;
+    background-color: {{ block.settings.image_placeholder_color }};
+  }
+
+  .ai-theme-card__image-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-theme-card__placeholder-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-theme-card__placeholder-{{ ai_gen_id }} svg {
+    width: 50%;
+    height: 50%;
+    opacity: 0.3;
+  }
+
+  .ai-theme-card__badge-{{ ai_gen_id }} {
+    position: absolute;
+    top: {{ block.settings.badge_position_top }}px;
+    {% if block.settings.badge_align == 'left' %}
+      left: {{ block.settings.badge_position_horizontal }}px;
+    {% else %}
+      right: {{ block.settings.badge_position_horizontal }}px;
+    {% endif %}
+    background-color: {{ block.settings.badge_background_color }};
+    color: {{ block.settings.badge_text_color }};
+    padding: {{ block.settings.badge_padding_vertical }}px {{ block.settings.badge_padding_horizontal }}px;
+    border-radius: {{ block.settings.badge_border_radius }}px;
+    font-size: {{ block.settings.badge_font_size }}px;
+    font-weight: 600;
+    text-align: center;
+    z-index: 2;
+    width: fit-content;
+  }
+
+  .ai-theme-card__content-{{ ai_gen_id }} {
+    padding: {{ block.settings.card_padding_vertical }}px {{ block.settings.card_padding_horizontal }}px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    flex-grow: 1;
+  }
+
+  .ai-theme-card__title-{{ ai_gen_id }} {
+    color: {{ block.settings.title_color }};
+    font-size: {{ block.settings.title_font_size_mobile }}px;
+    font-weight: 600;
+    margin: 0;
+    font-family: var(--font-heading-family);
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-theme-card__title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.title_font_size_desktop }}px;
+    }
+  }
+
+  .ai-theme-card__link-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+
+  .ai-slider-arrow-{{ ai_gen_id }} {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: {{ block.settings.arrow_size }}px;
+    height: {{ block.settings.arrow_size }}px;
+    background-color: {{ block.settings.arrow_background_color }};
+    border: none;
+    border-radius: {{ block.settings.arrow_border_radius }}px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    transition: opacity 0.3s ease, background-color 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-slider-arrow-{{ ai_gen_id }} {
+      {% if block.settings.mobile_layout == '2_columns' %}
+        display: none;
+      {% elsif block.settings.show_arrows_preview %}
+        opacity: 1;
+      {% else %}
+        opacity: 0;
+      {% endif %}
+    }
+
+    .ai-theme-card-slider-{{ ai_gen_id }}:hover .ai-slider-arrow-{{ ai_gen_id }} {
+      opacity: 1;
+    }
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-slider-arrow-{{ ai_gen_id }} {
+      display: none;
+    }
+  }
+
+  .ai-slider-arrow-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.arrow_hover_background_color }};
+  }
+
+  .ai-slider-arrow-{{ ai_gen_id }}:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .ai-slider-arrow--prev-{{ ai_gen_id }} {
+    left: {{ block.settings.arrow_offset }}px;
+  }
+
+  .ai-slider-arrow--next-{{ ai_gen_id }} {
+    right: {{ block.settings.arrow_offset }}px;
+  }
+
+  .ai-slider-arrow-{{ ai_gen_id }} svg {
+    width: {{ block.settings.arrow_icon_size }}%;
+    height: {{ block.settings.arrow_icon_size }}%;
+    fill: {{ block.settings.arrow_icon_color }};
+  }
+{% endstyle %}
+
+<theme-card-slider-{{ ai_gen_id }} class="ai-theme-card-slider-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  {% if block.settings.heading != blank %}
+    <div class="ai-theme-card-slider__header-{{ ai_gen_id }}">
+      <h2 class="ai-theme-card-slider__heading-{{ ai_gen_id }}">{{ block.settings.heading }}</h2>
+    </div>
+  {% endif %}
+
+  <div class="ai-theme-card-slider__container-{{ ai_gen_id }}">
+    <button 
+      class="ai-slider-arrow-{{ ai_gen_id }} ai-slider-arrow--prev-{{ ai_gen_id }}" 
+      aria-label="Previous"
+      data-direction="prev"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+      </svg>
+    </button>
+
+    <div class="ai-theme-card-slider__grid-{{ ai_gen_id }}">
+      {% for i in (1..7) %}
+        {% assign card_image_key = 'card_' | append: i | append: '_image' %}
+        {% assign card_title_key = 'card_' | append: i | append: '_title' %}
+        {% assign card_badge_key = 'card_' | append: i | append: '_badge' %}
+        {% assign card_link_key = 'card_' | append: i | append: '_link' %}
+        
+        {% assign card_image = block.settings[card_image_key] %}
+        {% assign card_title = block.settings[card_title_key] %}
+        {% assign card_badge = block.settings[card_badge_key] %}
+        {% assign card_link = block.settings[card_link_key] %}
+        
+        <div class="ai-theme-card-{{ ai_gen_id }}">
+          <div class="ai-theme-card__image-wrapper-{{ ai_gen_id }}">
+            {% if card_image %}
+              <img
+                src="{{ card_image | image_url: width: 800 }}"
+                alt="{{ card_title | escape }}"
+                loading="lazy"
+                width="800"
+                height="{{ 800 | times: block.settings.image_aspect_ratio | divided_by: 100 }}"
+                class="ai-theme-card__image-{{ ai_gen_id }}"
+              >
+            {% else %}
+              <div class="ai-theme-card__placeholder-{{ ai_gen_id }}">
+                {{ 'image' | placeholder_svg_tag }}
+              </div>
+            {% endif %}
+
+            {% if card_badge != blank %}
+              <div class="ai-theme-card__badge-{{ ai_gen_id }}">
+                {{ card_badge }}
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="ai-theme-card__content-{{ ai_gen_id }}">
+            {% if card_title != blank %}
+              <h3 class="ai-theme-card__title-{{ ai_gen_id }}">{{ card_title }}</h3>
+            {% endif %}
+          </div>
+
+          {% if card_link != blank %}
+            <a href="{{ card_link }}" class="ai-theme-card__link-{{ ai_gen_id }}" aria-label="{{ card_title | escape }}"></a>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+
+    <button 
+      class="ai-slider-arrow-{{ ai_gen_id }} ai-slider-arrow--next-{{ ai_gen_id }}" 
+      aria-label="Next"
+      data-direction="next"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+      </svg>
+    </button>
+  </div>
+</theme-card-slider-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class ThemeCardSlider{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.grid = this.querySelector('.ai-theme-card-slider__grid-{{ ai_gen_id }}');
+        this.prevButton = this.querySelector('.ai-slider-arrow--prev-{{ ai_gen_id }}');
+        this.nextButton = this.querySelector('.ai-slider-arrow--next-{{ ai_gen_id }}');
+        
+        if (this.prevButton && this.nextButton) {
+          this.setupArrows();
+          this.updateArrowStates();
+          
+          this.grid.addEventListener('scroll', () => {
+            this.updateArrowStates();
+          });
+        }
+      }
+
+      setupArrows() {
+        this.prevButton.addEventListener('click', () => {
+          this.scroll('prev');
+        });
+
+        this.nextButton.addEventListener('click', () => {
+          this.scroll('next');
+        });
+      }
+
+      scroll(direction) {
+        const cardWidth = this.grid.querySelector('.ai-theme-card-{{ ai_gen_id }}').offsetWidth;
+        const gap = parseInt(getComputedStyle(this.grid).gap) || 0;
+        const scrollAmount = cardWidth + gap;
+
+        if (direction === 'prev') {
+          this.grid.scrollLeft -= scrollAmount;
+        } else {
+          this.grid.scrollLeft += scrollAmount;
+        }
+      }
+
+      updateArrowStates() {
+        const isAtStart = this.grid.scrollLeft <= 0;
+        const isAtEnd = this.grid.scrollLeft + this.grid.offsetWidth >= this.grid.scrollWidth - 1;
+
+        this.prevButton.disabled = isAtStart;
+        this.nextButton.disabled = isAtEnd;
+      }
+    }
+
+    customElements.define('theme-card-slider-{{ ai_gen_id }}', ThemeCardSlider{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Theme card slider",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Explore Our Themes"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size_desktop",
+      "label": "Desktop font size",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size_mobile",
+      "label": "Mobile font size",
+      "min": 18,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "heading_spacing_desktop",
+      "label": "Desktop spacing below heading",
+      "min": 16,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "heading_spacing_mobile",
+      "label": "Mobile spacing below heading",
+      "min": 12,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Desktop columns",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "select",
+      "id": "mobile_layout",
+      "label": "Mobile layout",
+      "options": [
+        { "value": "1_column", "label": "1 column (full width)" },
+        { "value": "2_columns", "label": "2 columns (grid)" },
+        { "value": "peek", "label": "1.5 columns (peek)" }
+      ],
+      "default": "peek",
+      "info": "Peek shows first card + half of second card"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top_desktop",
+      "label": "Desktop top padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom_desktop",
+      "label": "Desktop bottom padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "section_padding_horizontal_desktop",
+      "label": "Desktop side padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top_mobile",
+      "label": "Mobile top padding",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom_mobile",
+      "label": "Mobile bottom padding",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "section_padding_horizontal_mobile",
+      "label": "Mobile side padding",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "grid_gap_desktop",
+      "label": "Desktop grid gap",
+      "min": 8,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "grid_gap_mobile",
+      "label": "Mobile grid gap",
+      "min": 8,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Navigation arrows"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows_preview",
+      "label": "Show arrows preview on mobile",
+      "default": true,
+      "info": "When enabled, the right arrow is visible by default to indicate it's a slider. Arrows appear on hover."
+    },
+    {
+      "type": "range",
+      "id": "arrow_size",
+      "label": "Arrow button size",
+      "min": 30,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "arrow_icon_size",
+      "label": "Arrow icon size",
+      "min": 40,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "arrow_offset",
+      "label": "Arrow position from edge",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "arrow_border_radius",
+      "label": "Arrow border radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "color",
+      "id": "arrow_background_color",
+      "label": "Arrow background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "arrow_hover_background_color",
+      "label": "Arrow hover background",
+      "default": "#f4f4f4"
+    },
+    {
+      "type": "color",
+      "id": "arrow_icon_color",
+      "label": "Arrow icon color",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Card style"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Card border radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "card_padding_vertical",
+      "label": "Card vertical padding",
+      "min": 8,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "card_padding_horizontal",
+      "label": "Card horizontal padding",
+      "min": 8,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "card_background_color",
+      "label": "Card background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "range",
+      "id": "image_aspect_ratio",
+      "label": "Image aspect ratio",
+      "min": 50,
+      "max": 150,
+      "step": 5,
+      "unit": "%",
+      "default": 100,
+      "info": "100% = square, 75% = landscape, 133% = portrait"
+    },
+    {
+      "type": "color",
+      "id": "image_placeholder_color",
+      "label": "Placeholder background",
+      "default": "#f4f4f4"
+    },
+    {
+      "type": "header",
+      "content": "Badge"
+    },
+    {
+      "type": "select",
+      "id": "badge_align",
+      "label": "Badge alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "badge_position_top",
+      "label": "Badge top position",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "badge_position_horizontal",
+      "label": "Badge horizontal position",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "badge_font_size",
+      "label": "Badge font size",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "badge_padding_vertical",
+      "label": "Badge vertical padding",
+      "min": 2,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "badge_padding_horizontal",
+      "label": "Badge horizontal padding",
+      "min": 4,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "badge_border_radius",
+      "label": "Badge border radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 6
+    },
+    {
+      "type": "color",
+      "id": "badge_background_color",
+      "label": "Badge background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "badge_text_color",
+      "label": "Badge text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Title"
+    },
+    {
+      "type": "range",
+      "id": "title_font_size_desktop",
+      "label": "Desktop font size",
+      "min": 14,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "title_font_size_mobile",
+      "label": "Mobile font size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Card 1 - Dinosaures"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_1_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_1_title",
+      "label": "Title",
+      "default": "Dinosaures"
+    },
+    {
+      "type": "text",
+      "id": "card_1_badge",
+      "label": "Badge text",
+      "default": "🌟 Unisexe"
+    },
+    {
+      "type": "url",
+      "id": "card_1_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 2 - Princesse"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_2_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_2_title",
+      "label": "Title",
+      "default": "Princesse"
+    },
+    {
+      "type": "text",
+      "id": "card_2_badge",
+      "label": "Badge text",
+      "default": "🌸 Fille"
+    },
+    {
+      "type": "url",
+      "id": "card_2_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 3 - Espace"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_3_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_3_title",
+      "label": "Title",
+      "default": "Espace"
+    },
+    {
+      "type": "text",
+      "id": "card_3_badge",
+      "label": "Badge text",
+      "default": "🌟 Unisexe"
+    },
+    {
+      "type": "url",
+      "id": "card_3_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 4 - Animaux"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_4_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_4_title",
+      "label": "Title",
+      "default": "Animaux"
+    },
+    {
+      "type": "text",
+      "id": "card_4_badge",
+      "label": "Badge text",
+      "default": "🌟 Unisexe"
+    },
+    {
+      "type": "url",
+      "id": "card_4_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 5 - Super-Héros"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_5_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_5_title",
+      "label": "Title",
+      "default": "Super-Héros"
+    },
+    {
+      "type": "text",
+      "id": "card_5_badge",
+      "label": "Badge text",
+      "default": "🌟 Unisexe"
+    },
+    {
+      "type": "url",
+      "id": "card_5_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 6 - Voyage"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_6_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_6_title",
+      "label": "Title",
+      "default": "Voyage"
+    },
+    {
+      "type": "text",
+      "id": "card_6_badge",
+      "label": "Badge text",
+      "default": "🌟 Unisexe"
+    },
+    {
+      "type": "url",
+      "id": "card_6_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 7 - Football"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_7_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_7_title",
+      "label": "Title",
+      "default": "Football"
+    },
+    {
+      "type": "text",
+      "id": "card_7_badge",
+      "label": "Badge text",
+      "default": "🌟 Unisexe"
+    },
+    {
+      "type": "url",
+      "id": "card_7_link",
+      "label": "Link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Theme card slider"
+    }
+  ]
+}
+{% endschema %}

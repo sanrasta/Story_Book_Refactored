@@ -1,0 +1,741 @@
+{% doc %}
+  @prompt
+    Here is the condensed, high-density version. It fits entirely in one prompt but keeps all the technical requirements.
+    
+    Copy and paste this:
+    
+    "Create a 'Mobile Mosaic' 10-Card Floating Grid Section for Shopify.
+    
+    1. Section Purpose & Type: A Bento-style grid to showcase trust signals and process steps, designed to look like a modern mobile app interface.
+    
+    2. Layout & Structure: Use a CSS Grid. Strictly follow this alternating pattern:
+    
+    Row 1: 1 Full-width Card (WhatsApp Hook)
+    
+    Row 2: 2 Split-column Cards (Payment + Speed)
+    
+    Row 3: 1 Full-width Card (Quality Zoom)
+    
+    Row 4: 2 Split-column Cards (Form + Magic Step)
+    
+    Row 5: 1 Full-width Card (Social Proof)
+    
+    Row 6: 2 Split-column Cards (Made in Morocco + Format)
+    
+    Row 7: 1 Full-width Card (Guarantee)
+    
+    Gap: Tight spacing (10-12px) to look like a cohesive puzzle.
+    
+    3. Key Elements: 10 Blocks total. Each block needs settings for 'Width' (Full vs Half), an Image/Icon picker, Heading, and Body text.
+    
+    4. Style & Design: 'Floating' aesthetic. Section background defaults to Beige; Cards are pure White with 20px rounded corners and soft drop shadows (box-shadow: 0 4px 15px rgba(0,0,0,0.05)).
+    
+    5. Customization Options (CRITICAL):
+    
+    Geometry: Add range sliders for Section Margins/Padding, Grid Gaps, and Card Padding.
+    
+    Sizing: Make photo/icon sizes fully adjustable via sliders.
+    
+    Typography: Make all text sizes (headings and body) customizable with separate Mobile/Desktop sliders.
+    
+    Colors: Pickers for Section Background, Card Background, and Text.
+    
+    6. Responsive Behavior: On Mobile, strictly enforce the mosaic pattern. The split cards (Row 2, 4, 6) must sit side-by-side (50% width), do NOT stack them vertically.
+    
+    For Consistency: Use a modern, minimal aesthetic with clean sans-serif fonts."
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-mobile-mosaic-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    background-color: {{ block.settings.section_bg_color }};
+    padding: {{ block.settings.section_padding_mobile }}px {{ block.settings.section_margin_mobile }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-mobile-mosaic-{{ ai_gen_id }} {
+      padding: {{ block.settings.section_padding_desktop }}px {{ block.settings.section_margin_desktop }}px;
+    }
+  }
+
+  .ai-mobile-mosaic__grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: {{ block.settings.grid_gap }}px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .ai-mobile-mosaic__card-{{ ai_gen_id }} {
+    background-color: {{ block.settings.card_bg_color }};
+    border-radius: {{ block.settings.card_border_radius }}px;
+    padding: {{ block.settings.card_padding }}px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .ai-mobile-mosaic__card-{{ ai_gen_id }}:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .ai-mobile-mosaic__card--full-{{ ai_gen_id }} {
+    grid-column: 1 / -1;
+  }
+
+  .ai-mobile-mosaic__card--half-{{ ai_gen_id }} {
+    grid-column: span 1;
+  }
+
+  .ai-mobile-mosaic__image-wrapper-{{ ai_gen_id }} {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-mobile-mosaic__image-{{ ai_gen_id }} {
+    width: {{ block.settings.image_size_mobile }}px;
+    height: {{ block.settings.image_size_mobile }}px;
+    object-fit: contain;
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-mobile-mosaic__image-{{ ai_gen_id }} {
+      width: {{ block.settings.image_size_desktop }}px;
+      height: {{ block.settings.image_size_desktop }}px;
+    }
+  }
+
+  .ai-mobile-mosaic__image-placeholder-{{ ai_gen_id }} {
+    width: {{ block.settings.image_size_mobile }}px;
+    height: {{ block.settings.image_size_mobile }}px;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-mobile-mosaic__image-placeholder-{{ ai_gen_id }} {
+      width: {{ block.settings.image_size_desktop }}px;
+      height: {{ block.settings.image_size_desktop }}px;
+    }
+  }
+
+  .ai-mobile-mosaic__image-placeholder-{{ ai_gen_id }} svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.3;
+  }
+
+  .ai-mobile-mosaic__heading-{{ ai_gen_id }} {
+    margin: 0;
+    color: {{ block.settings.text_color }};
+    font-size: {{ block.settings.heading_size_mobile }}px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-mobile-mosaic__heading-{{ ai_gen_id }} {
+      font-size: {{ block.settings.heading_size_desktop }}px;
+    }
+  }
+
+  .ai-mobile-mosaic__body-{{ ai_gen_id }} {
+    margin: 0;
+    color: {{ block.settings.text_color }};
+    font-size: {{ block.settings.body_size_mobile }}px;
+    line-height: 1.5;
+    opacity: 0.85;
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-mobile-mosaic__body-{{ ai_gen_id }} {
+      font-size: {{ block.settings.body_size_desktop }}px;
+    }
+  }
+{% endstyle %}
+
+<mobile-mosaic-{{ ai_gen_id }} class="ai-mobile-mosaic-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-mobile-mosaic__grid-{{ ai_gen_id }}">
+    {% for i in (1..10) %}
+      {% liquid
+        assign card_width_key = 'card_' | append: i | append: '_width'
+        assign card_image_key = 'card_' | append: i | append: '_image'
+        assign card_heading_key = 'card_' | append: i | append: '_heading'
+        assign card_body_key = 'card_' | append: i | append: '_body'
+
+        assign card_width = block.settings[card_width_key]
+        assign card_image = block.settings[card_image_key]
+        assign card_heading = block.settings[card_heading_key]
+        assign card_body = block.settings[card_body_key]
+
+        if card_width == 'full'
+          assign width_class = 'ai-mobile-mosaic__card--full-' | append: ai_gen_id
+        else
+          assign width_class = 'ai-mobile-mosaic__card--half-' | append: ai_gen_id
+        endif
+      %}
+
+      <div class="ai-mobile-mosaic__card-{{ ai_gen_id }} {{ width_class }}">
+        {% if card_image != blank %}
+          <div class="ai-mobile-mosaic__image-wrapper-{{ ai_gen_id }}">
+            <img
+              src="{{ card_image | image_url: width: 200 }}"
+              alt="{{ card_heading | escape }}"
+              class="ai-mobile-mosaic__image-{{ ai_gen_id }}"
+              loading="lazy"
+              width="200"
+              height="200"
+            >
+          </div>
+        {% else %}
+          <div class="ai-mobile-mosaic__image-wrapper-{{ ai_gen_id }}">
+            <div class="ai-mobile-mosaic__image-placeholder-{{ ai_gen_id }}">
+              {{ 'image' | placeholder_svg_tag }}
+            </div>
+          </div>
+        {% endif %}
+
+        {% if card_heading != blank %}
+          <h3 class="ai-mobile-mosaic__heading-{{ ai_gen_id }}">{{ card_heading }}</h3>
+        {% endif %}
+
+        {% if card_body != blank %}
+          <p class="ai-mobile-mosaic__body-{{ ai_gen_id }}">{{ card_body }}</p>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+</mobile-mosaic-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class MobileMosaic{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.enforcePattern();
+      }
+
+      enforcePattern() {
+        const cards = this.querySelectorAll('.ai-mobile-mosaic__card-{{ ai_gen_id }}');
+        const pattern = ['full', 'half', 'half', 'full', 'half', 'half', 'full', 'half', 'half', 'full'];
+        
+        cards.forEach((card, index) => {
+          card.classList.remove('ai-mobile-mosaic__card--full-{{ ai_gen_id }}', 'ai-mobile-mosaic__card--half-{{ ai_gen_id }}');
+          
+          if (pattern[index] === 'full') {
+            card.classList.add('ai-mobile-mosaic__card--full-{{ ai_gen_id }}');
+          } else {
+            card.classList.add('ai-mobile-mosaic__card--half-{{ ai_gen_id }}');
+          }
+        });
+      }
+    }
+
+    customElements.define('mobile-mosaic-{{ ai_gen_id }}', MobileMosaic{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Mobile mosaic",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section style"
+    },
+    {
+      "type": "color",
+      "id": "section_bg_color",
+      "label": "Background",
+      "default": "#F5F5DC"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_mobile",
+      "label": "Padding (mobile)",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "section_padding_desktop",
+      "label": "Padding (desktop)",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "section_margin_mobile",
+      "label": "Side margin (mobile)",
+      "min": 10,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "section_margin_desktop",
+      "label": "Side margin (desktop)",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Grid settings"
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "label": "Gap between cards",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Card style"
+    },
+    {
+      "type": "color",
+      "id": "card_bg_color",
+      "label": "Background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Corner radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "label": "Padding",
+      "min": 10,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Image sizing"
+    },
+    {
+      "type": "range",
+      "id": "image_size_mobile",
+      "label": "Size (mobile)",
+      "min": 40,
+      "max": 120,
+      "step": 5,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "image_size_desktop",
+      "label": "Size (desktop)",
+      "min": 60,
+      "max": 160,
+      "step": 5,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Heading size (mobile)",
+      "min": 14,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "Heading size (desktop)",
+      "min": 16,
+      "max": 36,
+      "step": 1,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "body_size_mobile",
+      "label": "Body size (mobile)",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "range",
+      "id": "body_size_desktop",
+      "label": "Body size (desktop)",
+      "min": 13,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "header",
+      "content": "Card 1 (Full width)"
+    },
+    {
+      "type": "select",
+      "id": "card_1_width",
+      "label": "Width",
+      "options": [
+        { "value": "full", "label": "Full" },
+        { "value": "half", "label": "Half" }
+      ],
+      "default": "full"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_1_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_1_heading",
+      "label": "Heading",
+      "default": "WhatsApp Support"
+    },
+    {
+      "type": "textarea",
+      "id": "card_1_body",
+      "label": "Body text",
+      "default": "Chat with us instantly"
+    },
+    {
+      "type": "header",
+      "content": "Card 2 (Half width)"
+    },
+    {
+      "type": "select",
+      "id": "card_2_width",
+      "label": "Width",
+      "options": [
+        { "value": "full", "label": "Full" },
+        { "value": "half", "label": "Half" }
+      ],
+      "default": "half"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_2_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_2_heading",
+      "label": "Heading",
+      "default": "Secure Payment"
+    },
+    {
+      "type": "textarea",
+      "id": "card_2_body",
+      "label": "Body text",
+      "default": "100% safe checkout"
+    },
+    {
+      "type": "header",
+      "content": "Card 3 (Half width)"
+    },
+    {
+      "type": "select",
+      "id": "card_3_width",
+      "label": "Width",
+      "options": [
+        { "value": "full", "label": "Full" },
+        { "value": "half", "label": "Half" }
+      ],
+      "default": "half"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_3_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_3_heading",
+      "label": "Heading",
+      "default": "Fast Delivery"
+    },
+    {
+      "type": "textarea",
+      "id": "card_3_body",
+      "label": "Body text",
+      "default": "Ships within 24h"
+    },
+    {
+      "type": "header",
+      "content": "Card 4 (Full width)"
+    },
+    {
+      "type": "select",
+      "id": "card_4_width",
+      "label": "Width",
+      "options": [
+        { "value": "full", "label": "Full" },
+        { "value": "half", "label": "Half" }
+      ],
+      "default": "full"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_4_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_4_heading",
+      "label": "Heading",
+      "default": "Premium Quality"
+    },
+    {
+      "type": "textarea",
+      "id": "card_4_body",
+      "label": "Body text",
+      "default": "Zoom in to see details"
+    },
+    {
+      "type": "header",
+      "content": "Card 5 (Half width)"
+    },
+    {
+      "type": "select",
+      "id": "card_5_width",
+      "label": "Width",
+      "options": [
+        { "value": "full", "label": "Full" },
+        { "value": "half", "label": "Half" }
+      ],
+      "default": "half"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_5_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_5_heading",
+      "label": "Heading",
+      "default": "Easy Form"
+    },
+    {
+      "type": "textarea",
+      "id": "card_5_body",
+      "label": "Body text",
+      "default": "Quick checkout process"
+    },
+    {
+      "type": "header",
+      "content": "Card 6 (Half width)"
+    },
+    {
+      "type": "select",
+      "id": "card_6_width",
+      "label": "Width",
+      "options": [
+        { "value": "full", "label": "Full" },
+        { "value": "half", "label": "Half" }
+      ],
+      "default": "half"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_6_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_6_heading",
+      "label": "Heading",
+      "default": "Magic Step"
+    },
+    {
+      "type": "textarea",
+      "id": "card_6_body",
+      "label": "Body text",
+      "default": "Personalized experience"
+    },
+    {
+      "type": "header",
+      "content": "Card 7 (Full width)"
+    },
+    {
+      "type": "select",
+      "id": "card_7_width",
+      "label": "Width",
+      "options": [
+        { "value": "full", "label": "Full" },
+        { "value": "half", "label": "Half" }
+      ],
+      "default": "full"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_7_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_7_heading",
+      "label": "Heading",
+      "default": "Social Proof"
+    },
+    {
+      "type": "textarea",
+      "id": "card_7_body",
+      "label": "Body text",
+      "default": "Trusted by thousands"
+    },
+    {
+      "type": "header",
+      "content": "Card 8 (Half width)"
+    },
+    {
+      "type": "select",
+      "id": "card_8_width",
+      "label": "Width",
+      "options": [
+        { "value": "full", "label": "Full" },
+        { "value": "half", "label": "Half" }
+      ],
+      "default": "half"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_8_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_8_heading",
+      "label": "Heading",
+      "default": "Made in Morocco"
+    },
+    {
+      "type": "textarea",
+      "id": "card_8_body",
+      "label": "Body text",
+      "default": "Locally crafted"
+    },
+    {
+      "type": "header",
+      "content": "Card 9 (Half width)"
+    },
+    {
+      "type": "select",
+      "id": "card_9_width",
+      "label": "Width",
+      "options": [
+        { "value": "full", "label": "Full" },
+        { "value": "half", "label": "Half" }
+      ],
+      "default": "half"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_9_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_9_heading",
+      "label": "Heading",
+      "default": "Multiple Formats"
+    },
+    {
+      "type": "textarea",
+      "id": "card_9_body",
+      "label": "Body text",
+      "default": "PDF & Print available"
+    },
+    {
+      "type": "header",
+      "content": "Card 10 (Full width)"
+    },
+    {
+      "type": "select",
+      "id": "card_10_width",
+      "label": "Width",
+      "options": [
+        { "value": "full", "label": "Full" },
+        { "value": "half", "label": "Half" }
+      ],
+      "default": "full"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_10_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_10_heading",
+      "label": "Heading",
+      "default": "Money-Back Guarantee"
+    },
+    {
+      "type": "textarea",
+      "id": "card_10_body",
+      "label": "Body text",
+      "default": "30-day satisfaction guarantee"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mobile mosaic"
+    }
+  ]
+}
+{% endschema %}

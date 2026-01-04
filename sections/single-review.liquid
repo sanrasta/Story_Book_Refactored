@@ -1,0 +1,293 @@
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  /* Custom Color Logic */
+  {%- if section.settings.custom_gradient_background != blank -%}
+    .section-{{ section.id }}-colors {
+      background: {{ section.settings.custom_gradient_background }};
+    }
+  {%- elsif section.settings.custom_colors_background != blank and section.settings.custom_colors_background != 'rgba(0,0,0,0)' -%}
+    .section-{{ section.id }}-colors {
+      background-color: {{ section.settings.custom_colors_background }};
+    }
+  {%- endif -%}
+
+  /* Layout Styling */
+  .testimonial-card-{{ section.id }} .testimonial-card__wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .testimonial-card-{{ section.id }} .testimonial-card__content-box {
+    display: flex;
+    flex-wrap: nowrap; /* Do not stack on mobile */
+    align-items: center;
+    gap: 1.5rem;
+    padding: 2rem;
+    border-radius: var(--border-radius, 12px);
+  }
+
+  @media screen and (min-width: 750px) {
+    .testimonial-card-{{ section.id }} .testimonial-card__content-box {
+      gap: 3rem;
+      padding: 4rem;
+    }
+  }
+
+  /* Image Column */
+  .testimonial-card-{{ section.id }} .testimonial-card__media {
+    flex-shrink: 0; /* Prevent shrinking */
+    width: 70px; /* Fixed small width on mobile */
+    position: relative;
+    line-height: 0;
+  }
+
+  @media screen and (min-width: 750px) {
+    .testimonial-card-{{ section.id }} .testimonial-card__media {
+      width: 30%;
+      max-width: 200px;
+    }
+  }
+
+  .testimonial-card-{{ section.id }} .testimonial-card__image {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    aspect-ratio: 1 / 1;
+  }
+
+  /* Image Shapes */
+  .testimonial-card-{{ section.id }} .testimonial-card__image--circle {
+    border-radius: 50%;
+  }
+  .testimonial-card-{{ section.id }} .testimonial-card__image--rounded {
+    border-radius: 12px;
+  }
+  .testimonial-card-{{ section.id }} .testimonial-card__image--square {
+    border-radius: 0px;
+  }
+
+  /* Text Column */
+  .testimonial-card-{{ section.id }} .testimonial-card__text {
+    flex-grow: 1;
+    text-align: {{ section.settings.card_alignment }};
+  }
+
+  .testimonial-card-{{ section.id }} .testimonial-card__stars {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 1rem;
+    justify-content: {% if section.settings.card_alignment == 'center' %}center{% else %}flex-start{% endif %};
+  }
+  
+  .testimonial-card__stars svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .testimonial-card-{{ section.id }} .testimonial-card__quote {
+    font-size: 1.6rem;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+  }
+
+  @media screen and (min-width: 750px) {
+    .testimonial-card-{{ section.id }} .testimonial-card__quote {
+      font-size: 2rem;
+    }
+  }
+
+  .testimonial-card-{{ section.id }} .testimonial-card__author {
+    font-weight: bold;
+    font-size: 1.4rem;
+    opacity: 0.85;
+  }
+{%- endstyle -%}
+
+<div class="color-scheme-{{ section.settings.color_scheme }} section-{{ section.id }}-colors section-{{ section.id }}-padding testimonial-card-{{ section.id }}">
+  <div class="page-width">
+    <div class="testimonial-card__wrapper">
+      <div class="testimonial-card__content-box">
+        
+        <div class="testimonial-card__media">
+          {%- if section.settings.image != blank -%}
+            {{ section.settings.image | image_url: width: 400 | image_tag: 
+              loading: 'lazy', 
+              class: section.settings.image_shape | prepend: 'testimonial-card__image testimonial-card__image--'
+            }}
+          {%- else -%}
+            <div class="testimonial-card__image testimonial-card__image--{{ section.settings.image_shape }}" style="background-color: rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center;">
+              {% render 'material-icon', icon: 'person', filled: true %}
+            </div>
+          {%- endif -%}
+        </div>
+
+        <div class="testimonial-card__text">
+          {%- if section.settings.star_rating > 0 -%}
+            <div class="testimonial-card__stars" aria-label="{{ section.settings.star_rating }} out of 5 stars">
+              {%- for i in (1..section.settings.star_rating) -%}
+                {% render 'material-icon', icon: 'star', filled: true %}
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+
+          {%- if section.settings.quote != blank -%}
+            <div class="testimonial-card__quote rte">
+              {{ section.settings.quote }}
+            </div>
+          {%- endif -%}
+
+          {%- if section.settings.author_name != blank -%}
+            <div class="testimonial-card__author">
+              {{ section.settings.author_name | escape }}
+            </div>
+          {%- endif -%}
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Featured Testimonial",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Author Image"
+    },
+    {
+      "type": "range",
+      "id": "star_rating",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "label": "Star rating",
+      "default": 5
+    },
+    {
+      "type": "richtext",
+      "id": "quote",
+      "label": "Testimonial",
+      "default": "<p>\"This product completely changed my workflow. The quality is unmatched and the support team was incredibly helpful throughout the process.\"</p>"
+    },
+    {
+      "type": "text",
+      "id": "author_name",
+      "label": "Author name",
+      "default": "Jane Doe"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "select",
+      "id": "image_shape",
+      "label": "Image shape",
+      "options": [
+        {
+          "value": "circle",
+          "label": "Circle"
+        },
+        {
+          "value": "square",
+          "label": "Square"
+        },
+        {
+          "value": "rounded",
+          "label": "Rounded"
+        }
+      ],
+      "default": "circle"
+    },
+    {
+      "type": "select",
+      "id": "card_alignment",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "color",
+      "id": "custom_colors_background",
+      "label": "Custom background color"
+    },
+    {
+      "type": "color_background",
+      "id": "custom_gradient_background",
+      "label": "Custom background gradient"
+    },
+    {
+      "type": "header",
+      "content": "Section Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured Testimonial"
+    }
+  ]
+}
+{% endschema %}
