@@ -1,0 +1,48 @@
+{%- comment -%}
+  ============================================================================
+  MAGIC COVER PREVIEW SNIPPET
+  ============================================================================
+  
+  Props (required):
+    - id_prefix: String - Unique prefix for IDs (typically section.id)
+    - settings: Object - Section settings object
+  
+  Props (optional):
+    - product: Product - The selected product (may be blank)
+  
+  Defaults:
+    - None
+  
+  ============================================================================
+{%- endcomment -%}
+
+{%- comment -%} Phase 2: Preview area - hidden by default, shown after generation {%- endcomment -%}
+<div id="coverResult-{{ id_prefix }}" class="cover-result hidden" aria-live="polite">
+  <div class="result-card">
+    <div class="result-badge" aria-label="Preview ready">✨ Your Cover is Ready!</div>
+    <div class="cover-frame">
+      <img 
+        id="generatedCover-{{ id_prefix }}" 
+        src="" 
+        alt="Your personalized storybook cover preview"
+        loading="lazy"
+      >
+    </div>
+    <p class="result-text">Love your cover? Now let's create the full story inside!</p>
+    
+    <button type="button" id="createStoryBtn-{{ id_prefix }}" class="create-story-btn">
+      <span class="btn-icon">📖</span>
+      <span class="btn-label">
+        <span class="btn-main-text">Create Your Story</span>
+        <span class="btn-sub-text">Generate all pages with AI</span>
+      </span>
+      <span class="btn-arrow">→</span>
+    </button>
+    
+    <p class="result-note">
+      <span class="note-icon">✨</span>
+      <span>5 free scene regenerations included</span>
+    </p>
+  </div>
+</div>
+

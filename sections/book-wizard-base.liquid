@@ -1,0 +1,1591 @@
+<div class="wizard-wrapper" data-theme="{{ section.settings.theme }}">
+  <div class="wizard-card">
+
+    <!-- MAGIC COVER GENERATOR -->
+    <div id="magicSection" class="magic-section">
+      <div class="magic-badge">{{ section.settings.badge_text | default: '✨ AI-Powered' }}</div>
+      <h2 class="magic-title">{{ section.settings.hero_title | default: 'Create Your Personalized Book' }}</h2>
+      <p class="magic-subtitle">{{ section.settings.hero_subtitle | default: 'Generate a free preview of your custom book cover' }}</p>
+      
+      <button type="button" id="magicBtn" class="magic-button">
+        <span class="btn-glow"></span>
+        <span class="btn-content">
+          <svg class="wand-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 4V2"/><path d="M15 16v-2"/><path d="M8 9h2"/><path d="M20 9h2"/><path d="M17.8 11.8L19 13"/><path d="M15 9h0"/><path d="M17.8 6.2L19 5"/><path d="m3 21 9-9"/><path d="M12.2 6.2L11 5"/></svg>
+          <span>{{ section.settings.cta_text | default: 'Create Free Preview' }}</span>
+        </span>
+      </button>
+
+      <!-- Form revealed on click -->
+      <div id="magicForm" class="magic-form hidden">
+        <div class="form-card">
+          <h3 class="form-title">{{ section.settings.form_title | default: 'Tell us about the star of the story' }}</h3>
+          
+          <div class="form-grid">
+            <div class="form-field">
+              <label>{{ section.settings.name_label | default: 'First Name' }}</label>
+              <input type="text" id="magicName" placeholder="{{ section.settings.name_placeholder | default: 'e.g., Alex' }}">
+            </div>
+
+            <div class="form-field">
+              <label>{{ section.settings.secondary_field_label | default: 'Details' }}</label>
+              {% if section.settings.theme == 'kids' %}
+                <select id="magicAge">
+                  <option value="">Select age</option>
+                  {% for i in (1..12) %}
+                    <option value="{{ i }}">{{ i }} {% if i == 1 %}year{% else %}years{% endif %}</option>
+                  {% endfor %}
+                </select>
+              {% elsif section.settings.theme == 'valentines' %}
+                <input type="text" id="magicPartner" placeholder="Partner's name">
+              {% elsif section.settings.theme == 'worldcup' %}
+                <select id="magicTeam">
+                  <option value="">Select team</option>
+                  <option value="argentina">🇦🇷 Argentina</option>
+                  <option value="brazil">🇧🇷 Brazil</option>
+                  <option value="france">🇫🇷 France</option>
+                  <option value="germany">🇩🇪 Germany</option>
+                  <option value="spain">🇪🇸 Spain</option>
+                  <option value="england">🏴󠁧󠁢󠁥󠁮󠁧󠁿 England</option>
+                  <option value="portugal">🇵🇹 Portugal</option>
+                  <option value="italy">🇮🇹 Italy</option>
+                  <option value="netherlands">🇳🇱 Netherlands</option>
+                  <option value="belgium">🇧🇪 Belgium</option>
+                  <option value="usa">🇺🇸 USA</option>
+                  <option value="mexico">🇲🇽 Mexico</option>
+                </select>
+              {% else %}
+                <input type="text" id="magicSecondary" placeholder="Optional details">
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label>Upload a Photo</label>
+            <input type="file" id="magicPhoto" class="sr-only" accept="image/*">
+            <label for="magicPhoto" class="upload-zone">
+              <div class="upload-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+              </div>
+              <span id="magicPhotoLabel">Click to upload or drag & drop</span>
+              <span class="upload-hint">JPG, PNG up to 5MB</span>
+            </label>
+            <div id="magicPhotoPreview" class="photo-preview hidden"></div>
+          </div>
+
+          {% if section.settings.show_extras %}
+          <div class="form-field">
+            <label>Add special elements <span class="optional">(optional)</span></label>
+            <div class="element-chips">
+              {% for block in section.blocks %}
+                {% if block.type == 'extra_element' %}
+                  <label class="chip">
+                    <input type="checkbox" name="extras" value="{{ block.settings.value }}">
+                    <span>{{ block.settings.icon }} {{ block.settings.label }}</span>
+                  </label>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+
+          <div class="form-field">
+            <label>Special requests <span class="optional">(optional)</span></label>
+            <textarea id="magicCustom" placeholder="{{ section.settings.custom_placeholder | default: 'Any special details or requests...' }}"></textarea>
+          </div>
+
+          <button type="button" id="generateCoverBtn" class="generate-btn">
+            <span class="generate-text">{{ section.settings.generate_text | default: 'Generate My Preview' }}</span>
+            <span class="generate-loading hidden">
+              <svg class="spinner" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" fill="none" stroke-dasharray="32" stroke-linecap="round"/></svg>
+              Creating magic...
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Generated result -->
+      <div id="coverResult" class="cover-result hidden">
+        <div class="result-card">
+          <div class="result-badge">✨ Your Preview is Ready!</div>
+          <div class="cover-frame">
+            <img id="generatedCover" src="" alt="Your personalized cover">
+          </div>
+          <p class="result-text">Love it? Choose a package below to bring it to life!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PACKAGE SELECTION -->
+    <div id="packSection" class="pack-section">
+      <div class="section-header">
+        <h2>{{ section.settings.packages_title | default: 'Choose Your Package' }}</h2>
+        <p>{{ section.settings.packages_subtitle | default: 'Premium hardcover books, shipped worldwide' }}</p>
+      </div>
+
+      <form id="orderForm">
+        <div class="package-grid">
+          
+          <label class="package-card">
+            <input type="radio" name="package" value="1" data-price-usd="49" data-price-eur="45" data-price-gbp="39" data-price-cad="65" data-price-aud="75" checked>
+            <div class="card-inner">
+              <div class="package-header">
+                <span class="package-name">{{ section.settings.pkg1_name | default: 'Single Book' }}</span>
+                <span class="package-price"><span class="currency-symbol">$</span><span class="price-value">49</span></span>
+              </div>
+              <ul class="package-features">
+                <li>✓ 1 Personalized Book</li>
+                <li>✓ Premium Hardcover</li>
+                <li>✓ Free Worldwide Shipping</li>
+              </ul>
+            </div>
+          </label>
+
+          <label class="package-card popular">
+            <div class="popular-badge">Most Popular</div>
+            <input type="radio" name="package" value="2" data-price-usd="89" data-price-eur="82" data-price-gbp="72" data-price-cad="119" data-price-aud="135">
+            <div class="card-inner">
+              <div class="package-header">
+                <span class="package-name">{{ section.settings.pkg2_name | default: 'Duo Pack' }}</span>
+                <div class="price-group">
+                  <span class="package-price"><span class="currency-symbol">$</span><span class="price-value">89</span></span>
+                  <span class="price-per">$44.50 each</span>
+                </div>
+              </div>
+              <ul class="package-features">
+                <li>✓ 2 Personalized Books</li>
+                <li>✓ Save 10%</li>
+                <li>✓ Free Worldwide Shipping</li>
+                <li>✓ {{ section.settings.pkg2_bonus | default: 'Perfect for gifting' }}</li>
+              </ul>
+            </div>
+          </label>
+
+          <label class="package-card best-value">
+            <div class="value-badge">Best Value</div>
+            <input type="radio" name="package" value="3" data-price-usd="119" data-price-eur="109" data-price-gbp="95" data-price-cad="159" data-price-aud="179">
+            <div class="card-inner">
+              <div class="package-header">
+                <span class="package-name">{{ section.settings.pkg3_name | default: 'Family Pack' }}</span>
+                <div class="price-group">
+                  <span class="package-price"><span class="currency-symbol">$</span><span class="price-value">119</span></span>
+                  <span class="price-per">$39.67 each</span>
+                </div>
+              </div>
+              <ul class="package-features">
+                <li>✓ 3 Personalized Books</li>
+                <li>✓ Save 20%</li>
+                <li>✓ Free Worldwide Shipping</li>
+                <li>✓ {{ section.settings.pkg3_bonus | default: 'Great for families' }}</li>
+              </ul>
+            </div>
+          </label>
+
+        </div>
+
+        <div class="order-form">
+          <h3>Shipping Details</h3>
+          
+          <div class="input-grid">
+            <div class="input-field">
+              <label>Your Name</label>
+              <input type="text" name="customer_name" placeholder="Full name" required>
+            </div>
+
+            <div class="input-field">
+              <label>Email</label>
+              <input type="email" name="email" placeholder="your@email.com" required>
+            </div>
+          
+            <div class="input-field full-width">
+              <label>Phone Number</label>
+              <div class="phone-input">
+                <select name="country_code" id="countryCode">
+                  <option value="+1">🇺🇸 +1</option>
+                  <option value="+44">🇬🇧 +44</option>
+                  <option value="+61">🇦🇺 +61</option>
+                  <option value="+1">🇨🇦 +1</option>
+                  <option value="+33">🇫🇷 +33</option>
+                  <option value="+49">🇩🇪 +49</option>
+                  <option value="+34">🇪🇸 +34</option>
+                  <option value="+39">🇮🇹 +39</option>
+                  <option value="+31">🇳🇱 +31</option>
+                  <option value="+81">🇯🇵 +81</option>
+                  <option value="+86">🇨🇳 +86</option>
+                  <option value="+91">🇮🇳 +91</option>
+                  <option value="+55">🇧🇷 +55</option>
+                  <option value="+52">🇲🇽 +52</option>
+                  <option value="+971">🇦🇪 +971</option>
+                </select>
+                <input type="tel" name="phone" placeholder="Phone number" required>
+              </div>
+            </div>
+
+            <div class="input-field full-width">
+              <label>Shipping Address</label>
+              <input type="text" name="address" placeholder="Street address" required>
+            </div>
+
+            <div class="input-field">
+              <label>City</label>
+              <input type="text" name="city" placeholder="City" required>
+            </div>
+
+            <div class="input-field">
+              <label>Country</label>
+              <select name="country" id="countrySelect" required>
+                <option value="">Select country</option>
+                <option value="US">United States</option>
+                <option value="GB">United Kingdom</option>
+                <option value="CA">Canada</option>
+                <option value="AU">Australia</option>
+                <option value="DE">Germany</option>
+                <option value="FR">France</option>
+                <option value="ES">Spain</option>
+                <option value="IT">Italy</option>
+                <option value="NL">Netherlands</option>
+                <option value="BE">Belgium</option>
+                <option value="AT">Austria</option>
+                <option value="CH">Switzerland</option>
+                <option value="IE">Ireland</option>
+                <option value="NZ">New Zealand</option>
+                <option value="SG">Singapore</option>
+                <option value="AE">UAE</option>
+                <option value="JP">Japan</option>
+              </select>
+            </div>
+
+            <div class="input-field">
+              <label>Postal Code</label>
+              <input type="text" name="postal_code" placeholder="Postal/ZIP code" required>
+            </div>
+          </div>
+
+          <div class="trust-badges">
+            <div class="badge">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <span>Secure Checkout</span>
+            </div>
+            <div class="badge">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+              <span>Free Shipping</span>
+            </div>
+            <div class="badge">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="10"/></svg>
+              <span>Ships in 5-7 Days</span>
+            </div>
+          </div>
+
+          <button type="submit" id="submitBtn" class="submit-btn">
+            <span class="btn-text">Complete Order</span>
+            <span class="btn-price">• <span class="currency-symbol">$</span><span class="total-price">49</span></span>
+          </button>
+
+          <p class="guarantee">💯 100% Satisfaction Guaranteed or Your Money Back</p>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>
+
+<!-- Success Modal -->
+<div id="successModal" class="modal-overlay hidden">
+  <div class="modal-content">
+    <div class="success-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+    </div>
+    <h3>Order Confirmed! 🎉</h3>
+    <p>We've received your order and will start creating your book. You'll receive a confirmation email shortly.</p>
+    <button onclick="document.getElementById('successModal').classList.add('hidden')" class="modal-btn">Got it!</button>
+  </div>
+</div>
+
+<style>
+  /* ============================================
+     BOOK WIZARD - THEME-DRIVEN DESIGN SYSTEM
+     Supports: kids, valentines, worldcup, generic
+  ============================================ */
+  
+  :root {
+    /* Base palette - neutral/generic */
+    --wizard-bg: #FFF7EB;
+    --wizard-surface: #ffffff;
+    --wizard-ink: #0B1B2B;
+    --wizard-ink-muted: #516173;
+    --wizard-ink-light: #8B9CAD;
+    
+    /* Theme accent - overridden per theme */
+    --wizard-accent: #F59E0B;
+    --wizard-accent-hover: #D97706;
+    --wizard-accent-glow: rgba(245, 158, 11, 0.3);
+    
+    /* Premium gold (constant) */
+    --wizard-gold: #D4AF37;
+    --wizard-gold-light: #E8D48A;
+    --wizard-gold-glow: rgba(212, 175, 55, 0.2);
+    
+    /* Status */
+    --wizard-success: #10b981;
+    
+    /* Structure */
+    --wizard-border: rgba(11, 27, 43, 0.1);
+    --wizard-input-bg: #f8f5f0;
+    --wizard-radius: 16px;
+    --wizard-radius-sm: 10px;
+    --wizard-shadow: 0 4px 12px rgba(11, 27, 43, 0.06);
+    --wizard-shadow-lg: 0 12px 32px rgba(11, 27, 43, 0.1);
+  }
+
+  /* THEME: Kids - Playful amber */
+  [data-theme="kids"] {
+    --wizard-accent: #F59E0B;
+    --wizard-accent-hover: #D97706;
+    --wizard-accent-glow: rgba(245, 158, 11, 0.3);
+    --wizard-hero-gradient: linear-gradient(135deg, #0B1B2B 0%, #1a2a3a 100%);
+  }
+
+  /* THEME: Valentines - Romantic rose */
+  [data-theme="valentines"] {
+    --wizard-bg: #FFF5F7;
+    --wizard-accent: #E11D48;
+    --wizard-accent-hover: #BE123C;
+    --wizard-accent-glow: rgba(225, 29, 72, 0.3);
+    --wizard-hero-gradient: linear-gradient(135deg, #4C0519 0%, #881337 100%);
+  }
+
+  /* THEME: World Cup - Champion emerald */
+  [data-theme="worldcup"] {
+    --wizard-bg: #F0FDF4;
+    --wizard-accent: #059669;
+    --wizard-accent-hover: #047857;
+    --wizard-accent-glow: rgba(5, 150, 105, 0.3);
+    --wizard-hero-gradient: linear-gradient(135deg, #064E3B 0%, #065F46 100%);
+  }
+
+  .wizard-wrapper {
+    background: var(--wizard-bg);
+    padding: 40px 16px;
+    font-family: 'DM Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  .wizard-card {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* MAGIC SECTION - Hero */
+  .magic-section {
+    background: var(--wizard-hero-gradient, linear-gradient(135deg, var(--wizard-ink) 0%, #1a2a3a 100%));
+    border-radius: var(--wizard-radius);
+    padding: 48px 32px;
+    text-align: center;
+    margin-bottom: 28px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(212, 175, 55, 0.15);
+  }
+
+  .magic-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(ellipse at top, rgba(212, 175, 55, 0.08) 0%, transparent 50%),
+      url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D4AF37' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+
+  .magic-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--wizard-gold) 0%, var(--wizard-gold-light) 100%);
+    color: var(--wizard-ink);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 6px 16px;
+    border-radius: 20px;
+    margin-bottom: 18px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    box-shadow: 0 4px 20px var(--wizard-gold-glow);
+  }
+
+  .magic-title {
+    color: white;
+    font-size: 30px;
+    font-weight: 700;
+    margin: 0 0 12px 0;
+    line-height: 1.2;
+    font-family: 'Crimson Pro', Georgia, serif;
+  }
+
+  .magic-subtitle {
+    color: rgba(255,255,255,0.75);
+    font-size: 16px;
+    margin: 0 0 30px 0;
+    line-height: 1.5;
+  }
+
+  /* PRIMARY CTA BUTTON */
+  .magic-button {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center; 
+    background: linear-gradient(135deg, var(--wizard-accent) 0%, var(--wizard-accent-hover) 100%);
+    color: white;
+    border: none;
+    padding: 18px 40px;
+    font-size: 17px;
+    font-weight: 700;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    font-family: inherit;
+    box-shadow: 0 4px 16px var(--wizard-accent-glow);
+  }
+  
+  .magic-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px var(--wizard-accent-glow);
+  }
+
+  .btn-glow {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.2), transparent);
+    transform: translateX(-100%);
+    animation: shimmer 2s infinite;
+  }
+
+  @keyframes shimmer {
+    100% { transform: translateX(100%); }
+  }
+
+  .btn-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .wand-icon {
+    animation: wiggle 1.5s ease-in-out infinite;
+  }
+
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-8deg); }
+    75% { transform: rotate(8deg); }
+  }
+
+  /* FORM STYLES */
+  .magic-form {
+    margin-top: 28px;
+    animation: slideIn 0.4s ease;
+  }
+
+  .magic-form.hidden { display: none; }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(-15px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .form-card {
+    background: white;
+    border-radius: var(--wizard-radius);
+    padding: 28px;
+    text-align: left;
+  }
+
+  .form-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--wizard-ink);
+    margin: 0 0 24px 0;
+    text-align: center;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .form-field {
+    margin-bottom: 18px;
+  }
+
+  .form-field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--wizard-ink);
+    margin-bottom: 8px;
+  }
+
+  .optional {
+    color: var(--wizard-ink-muted);
+    font-weight: 400;
+  }
+
+  .form-field input[type="text"],
+  .form-field select,
+  .form-field textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--wizard-border);
+    border-radius: var(--wizard-radius-sm);
+    font-size: 15px;
+    font-family: inherit;
+    background: var(--wizard-input-bg);
+    transition: all 0.2s;
+    box-sizing: border-box;
+  }
+
+  .form-field input:focus,
+  .form-field select:focus,
+  .form-field textarea:focus {
+    outline: none;
+    border-color: var(--wizard-accent);
+    background: white;
+  }
+
+  .form-field textarea {
+    min-height: 80px;
+    resize: vertical;
+  }
+
+  /* UPLOAD ZONE */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+  }
+
+  .upload-zone {
+    display: flex; 
+    flex-direction: column;
+    align-items: center; 
+    justify-content: center;
+    padding: 28px;
+    border: 2px dashed var(--wizard-border);
+    border-radius: var(--wizard-radius-sm);
+    background: var(--wizard-input-bg);
+    cursor: pointer; 
+    transition: all 0.2s; 
+    text-align: center;
+  }
+
+  .upload-zone:hover {
+    border-color: var(--wizard-accent);
+    background: white;
+  }
+
+  .upload-icon {
+    color: var(--wizard-ink-muted);
+    margin-bottom: 10px;
+  }
+
+  .upload-zone span {
+    display: block;
+  }
+
+  #magicPhotoLabel {
+    font-weight: 600;
+    color: var(--wizard-ink);
+  }
+
+  .upload-hint {
+    font-size: 12px;
+    color: var(--wizard-ink-muted);
+    margin-top: 4px;
+  }
+
+  .photo-preview {
+    margin-top: 12px;
+    border-radius: var(--wizard-radius-sm);
+    overflow: hidden; 
+    max-width: 120px;
+  }
+
+  .photo-preview.hidden { display: none; }
+
+  .photo-preview img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* ELEMENT CHIPS */
+  .element-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .chip {
+    cursor: pointer;
+  }
+
+  .chip input { display: none; }
+
+  .chip span {
+    display: inline-block;
+    padding: 10px 16px;
+    background: var(--wizard-input-bg);
+    border: 2px solid var(--wizard-border);
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+
+  .chip:hover span {
+    border-color: var(--wizard-accent);
+  }
+
+  .chip input:checked + span {
+    background: var(--wizard-accent);
+    border-color: var(--wizard-accent);
+    color: white;
+  }
+
+  /* GENERATE BUTTON */
+  .generate-btn {
+    width: 100%;
+    background: var(--wizard-ink);
+    color: white;
+    border: none;
+    padding: 16px;
+    font-size: 16px;
+    font-weight: 700;
+    border-radius: var(--wizard-radius-sm);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+
+  .generate-btn:hover {
+    background: #1a2a3a;
+  }
+
+  .generate-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  .generate-loading.hidden { display: none; }
+  .generate-text { display: flex; align-items: center; justify-content: center; gap: 8px; }
+
+  .spinner {
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    100% { transform: rotate(360deg); }
+  }
+
+  /* COVER RESULT */
+  .cover-result {
+    margin-top: 28px;
+    animation: revealIn 0.6s ease;
+  }
+
+  .cover-result.hidden { display: none; }
+
+  @keyframes revealIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .result-card {
+    background: var(--wizard-hero-gradient, linear-gradient(135deg, var(--wizard-ink) 0%, #1a2a3a 100%));
+    border-radius: var(--wizard-radius);
+    padding: 36px 28px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(212, 175, 55, 0.15);
+  }
+
+  .result-card::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(ellipse at center, 
+      rgba(212, 175, 55, 0.2) 0%, 
+      var(--wizard-accent-glow) 40%,
+      transparent 70%);
+    animation: spotlightPulse 3s ease infinite;
+    z-index: 0;
+  }
+
+  @keyframes spotlightPulse {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.8; }
+  }
+
+  .result-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--wizard-gold) 0%, var(--wizard-gold-light) 100%);
+    color: var(--wizard-ink);
+    font-size: 13px;
+    font-weight: 700;
+    padding: 8px 20px;
+    border-radius: 20px;
+    margin-bottom: 24px;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 4px 20px var(--wizard-gold-glow);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .cover-frame {
+    max-width: 280px;
+    margin: 0 auto;
+    border-radius: var(--wizard-radius);
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), 0 0 40px var(--wizard-gold-glow);
+    position: relative;
+    z-index: 1;
+    animation: coverReveal 0.8s ease forwards;
+    animation-delay: 0.2s;
+    opacity: 0;
+  }
+
+  @keyframes coverReveal {
+    0% { opacity: 0; transform: scale(0.85) rotateY(-15deg); }
+    100% { opacity: 1; transform: scale(1) rotateY(0); }
+  }
+
+  .cover-frame img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .result-text {
+    margin-top: 24px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 15px;
+    position: relative;
+    z-index: 1;
+    line-height: 1.5;
+  }
+
+  /* PACKAGE SECTION */
+  .pack-section {
+    background: var(--wizard-surface);
+    border-radius: var(--wizard-radius);
+    padding: 32px 24px;
+    box-shadow: var(--wizard-shadow);
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  .section-header h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--wizard-ink);
+    margin: 0 0 6px 0;
+  }
+
+  .section-header p {
+    color: var(--wizard-ink-muted);
+    font-size: 14px;
+    margin: 0;
+  }
+
+  /* PACKAGE CARDS */
+  .package-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 32px;
+  }
+
+  .package-card {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .package-card input { display: none; }
+
+  .card-inner {
+    border: 2px solid var(--wizard-border);
+    border-radius: var(--wizard-radius-sm);
+    padding: 18px 20px;
+    transition: all 0.2s;
+    background: white;
+  }
+
+  .package-card:hover .card-inner {
+    border-color: var(--wizard-accent);
+  }
+
+  .package-card input:checked + .card-inner {
+    border-color: var(--wizard-accent);
+    background: linear-gradient(to right, rgba(var(--wizard-accent), 0.03), transparent);
+    box-shadow: 0 0 0 3px var(--wizard-accent-glow);
+  }
+
+  .popular-badge, .value-badge {
+    position: absolute;
+    top: -10px;
+    right: 16px;
+    padding: 5px 14px;
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+
+  .popular-badge {
+    background: linear-gradient(135deg, var(--wizard-gold) 0%, var(--wizard-gold-light) 100%);
+    color: var(--wizard-ink);
+    box-shadow: 0 4px 20px var(--wizard-gold-glow);
+  }
+
+  .value-badge {
+    background: linear-gradient(135deg, var(--wizard-accent) 0%, var(--wizard-accent-hover) 100%);
+    color: white;
+    box-shadow: 0 4px 12px var(--wizard-accent-glow);
+  }
+
+  .package-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+
+  .package-name {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--wizard-ink);
+  }
+
+  .package-price {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--wizard-ink);
+  }
+
+  .price-group {
+    text-align: right;
+  }
+
+  .price-per {
+    display: block;
+    font-size: 12px;
+    color: var(--wizard-success);
+    font-weight: 600;
+    margin-top: 2px;
+  }
+
+  .package-features {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .package-features li {
+    font-size: 13px;
+    color: var(--wizard-ink-muted);
+    padding: 3px 0;
+  }
+
+  /* ORDER FORM */
+  .order-form {
+    border-top: 1px solid var(--wizard-border);
+    padding-top: 28px;
+  }
+
+  .order-form h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--wizard-ink);
+    margin: 0 0 20px 0;
+  }
+
+  .input-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .input-field {
+    margin-bottom: 0;
+  }
+
+  .input-field.full-width {
+    grid-column: 1 / -1;
+  }
+
+  .input-field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--wizard-ink);
+    margin-bottom: 8px;
+  }
+
+  .input-field input,
+  .input-field select {
+    width: 100%; 
+    padding: 12px 14px;
+    border: 2px solid var(--wizard-border);
+    border-radius: var(--wizard-radius-sm);
+    font-size: 15px;
+    font-family: inherit;
+    background: white;
+    transition: all 0.2s;
+    box-sizing: border-box;
+  }
+
+  .input-field input:focus,
+  .input-field select:focus {
+    outline: none;
+    border-color: var(--wizard-accent);
+  }
+
+  .phone-input {
+    display: flex;
+    gap: 10px;
+  }
+
+  .phone-input select {
+    width: 110px;
+    flex-shrink: 0;
+  }
+
+  .phone-input input {
+    flex: 1;
+  }
+
+  /* TRUST BADGES */
+  .trust-badges {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin: 28px 0;
+    padding: 20px;
+    background: var(--wizard-input-bg);
+    border-radius: var(--wizard-radius-sm);
+  }
+
+  .trust-badges .badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--wizard-ink-muted);
+  }
+
+  .trust-badges svg {
+    color: var(--wizard-success);
+  }
+
+  /* SUBMIT BUTTON */
+  .submit-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: linear-gradient(135deg, var(--wizard-accent) 0%, var(--wizard-accent-hover) 100%);
+    color: white;
+    border: none;
+    padding: 20px;
+    font-size: 18px;
+    font-weight: 700;
+    border-radius: var(--wizard-radius-sm);
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: inherit;
+    box-shadow: 0 4px 16px var(--wizard-accent-glow);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .submit-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s ease;
+  }
+
+  .submit-btn:hover::before {
+    left: 100%;
+  }
+
+  .submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px var(--wizard-accent-glow);
+  }
+
+  .guarantee {
+    text-align: center;
+    font-size: 13px;
+    color: var(--wizard-ink-muted);
+    margin: 16px 0 0 0;
+  }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 20px;
+  }
+
+  .modal-overlay.hidden { display: none; }
+
+  .modal-content {
+    background: white;
+    border-radius: var(--wizard-radius);
+    padding: 40px;
+    max-width: 400px;
+    text-align: center;
+    animation: modalIn 0.3s ease;
+  }
+
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .success-icon {
+    width: 64px;
+    height: 64px;
+    background: var(--wizard-success);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    color: white;
+  }
+
+  .success-icon svg {
+    width: 32px;
+    height: 32px;
+  }
+
+  .modal-content h3 {
+    font-size: 22px;
+    margin: 0 0 12px 0;
+    color: var(--wizard-ink);
+  }
+
+  .modal-content p {
+    color: var(--wizard-ink-muted);
+    margin: 0 0 24px 0;
+    line-height: 1.5;
+  }
+
+  .modal-btn {
+    background: var(--wizard-ink);
+    color: white;
+    border: none;
+    padding: 12px 32px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 25px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .wizard-wrapper { padding: 20px 12px; }
+    .magic-section { padding: 30px 20px; }
+    .magic-title { font-size: 24px; }
+    .form-grid { grid-template-columns: 1fr; }
+    .input-grid { grid-template-columns: 1fr; }
+    .input-field.full-width { grid-column: 1; }
+    .trust-badges { flex-direction: column; gap: 12px; align-items: center; }
+    .package-header { flex-direction: column; gap: 8px; }
+    .price-group { text-align: left; }
+  }
+</style>
+
+<script>
+  // ============================================
+  // DYNAMIC CURRENCY DETECTION
+  // ============================================
+  const currencyMap = {
+    US: { symbol: '$', code: 'usd' },
+    CA: { symbol: 'C$', code: 'cad' },
+    GB: { symbol: '£', code: 'gbp' },
+    AU: { symbol: 'A$', code: 'aud' },
+    DE: { symbol: '€', code: 'eur' },
+    FR: { symbol: '€', code: 'eur' },
+    ES: { symbol: '€', code: 'eur' },
+    IT: { symbol: '€', code: 'eur' },
+    NL: { symbol: '€', code: 'eur' },
+    BE: { symbol: '€', code: 'eur' },
+    AT: { symbol: '€', code: 'eur' },
+    IE: { symbol: '€', code: 'eur' },
+    NZ: { symbol: 'NZ$', code: 'aud' },
+    SG: { symbol: 'S$', code: 'usd' },
+    AE: { symbol: '$', code: 'usd' },
+    JP: { symbol: '¥', code: 'usd' }
+  };
+
+  let currentCurrency = { symbol: '$', code: 'usd' };
+
+  function detectCurrency() {
+    try {
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const locale = navigator.language || 'en-US';
+      
+      if (timezone.includes('London') || locale.startsWith('en-GB')) return currencyMap.GB;
+      if (timezone.includes('Sydney') || timezone.includes('Melbourne') || locale.includes('AU')) return currencyMap.AU;
+      if (timezone.includes('Toronto') || timezone.includes('Vancouver') || locale.includes('CA')) return currencyMap.CA;
+      if (timezone.includes('Paris') || timezone.includes('Berlin') || locale.startsWith('de') || locale.startsWith('fr')) return currencyMap.DE;
+      return currencyMap.US;
+    } catch (e) {
+      return currencyMap.US;
+    }
+  }
+
+  function updatePrices() {
+    const packages = document.querySelectorAll('input[name="package"]');
+    const symbols = document.querySelectorAll('.currency-symbol');
+    
+    symbols.forEach(s => s.textContent = currentCurrency.symbol);
+    
+    packages.forEach(pkg => {
+      const price = pkg.dataset['price' + currentCurrency.code.charAt(0).toUpperCase() + currentCurrency.code.slice(1)];
+      const priceDisplay = pkg.parentElement.querySelector('.price-value');
+      if (priceDisplay && price) priceDisplay.textContent = price;
+    });
+    
+    updateTotal();
+  }
+
+  function updateTotal() {
+    const selected = document.querySelector('input[name="package"]:checked');
+    if (selected) {
+      const price = selected.dataset['price' + currentCurrency.code.charAt(0).toUpperCase() + currentCurrency.code.slice(1)];
+      document.querySelector('.total-price').textContent = price;
+    }
+  }
+
+  document.getElementById('countrySelect').addEventListener('change', function() {
+    const country = this.value;
+    if (currencyMap[country]) {
+      currentCurrency = currencyMap[country];
+      updatePrices();
+    }
+  });
+
+  document.querySelectorAll('input[name="package"]').forEach(input => {
+    input.addEventListener('change', updateTotal);
+  });
+
+  // ============================================
+  // MAGIC COVER GENERATOR
+  // ============================================
+  const magicBtn = document.getElementById('magicBtn');
+  const magicForm = document.getElementById('magicForm');
+  const generateCoverBtn = document.getElementById('generateCoverBtn');
+  const coverResult = document.getElementById('coverResult');
+  const generatedCover = document.getElementById('generatedCover');
+  const magicPhotoInput = document.getElementById('magicPhoto');
+  const magicPhotoLabel = document.getElementById('magicPhotoLabel');
+  const magicPhotoPreview = document.getElementById('magicPhotoPreview');
+
+  magicBtn.addEventListener('click', function() {
+    magicForm.classList.remove('hidden');
+    this.style.display = 'none';
+    magicForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+
+  magicPhotoInput.addEventListener('change', function() {
+    if (this.files && this.files[0]) {
+      const file = this.files[0];
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Photo too large. Max 5MB allowed.');
+        this.value = '';
+        return;
+      }
+      
+      magicPhotoLabel.textContent = 'Photo added ✓';
+      magicPhotoLabel.style.color = 'var(--wizard-success)';
+      
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        magicPhotoPreview.innerHTML = '<img src="' + e.target.result + '" alt="Preview">';
+        magicPhotoPreview.classList.remove('hidden');
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  generateCoverBtn.addEventListener('click', function() {
+    const name = document.getElementById('magicName').value;
+    
+    if (!name.trim()) {
+      alert("Please enter a name");
+      return;
+    }
+
+    const btn = this;
+    const textEl = btn.querySelector('.generate-text');
+    const loadingEl = btn.querySelector('.generate-loading');
+    
+    btn.disabled = true;
+    textEl.classList.add('hidden');
+    loadingEl.classList.remove('hidden');
+
+    // Mock API call - replace with real webhook
+    setTimeout(() => {
+      generatedCover.src = 'https://placehold.co/400x500/1e3a5f/ffffff?text=' + encodeURIComponent(name + "'s\\nStory");
+      
+      magicForm.classList.add('hidden');
+      coverResult.classList.remove('hidden');
+      
+      setTimeout(() => {
+        document.getElementById('packSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 800);
+
+      btn.disabled = false;
+      textEl.classList.remove('hidden');
+      loadingEl.classList.add('hidden');
+    }, 2500);
+  });
+
+  // ============================================
+  // FORM SUBMISSION
+  // ============================================
+  const orderForm = document.getElementById('orderForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const successModal = document.getElementById('successModal');
+
+  orderForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span>Processing...</span>';
+
+    setTimeout(() => {
+      successModal.classList.remove('hidden');
+      orderForm.reset();
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '<span class="btn-text">Complete Order</span><span class="btn-price">• <span class="currency-symbol">' + currentCurrency.symbol + '</span><span class="total-price">49</span></span>';
+    }, 1500);
+  });
+
+  // ============================================
+  // INIT
+  // ============================================
+  currentCurrency = detectCurrency();
+  updatePrices();
+</script>
+
+{% schema %}
+{
+  "name": "Book Wizard",
+  "tag": "section",
+  "class": "book-wizard-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Theme Selection"
+    },
+    {
+      "type": "select",
+      "id": "theme",
+      "label": "Book Theme",
+      "options": [
+        { "value": "generic", "label": "Generic" },
+        { "value": "kids", "label": "Kids Storybook" },
+        { "value": "valentines", "label": "Valentines" },
+        { "value": "worldcup", "label": "World Cup" }
+      ],
+      "default": "generic"
+    },
+    {
+      "type": "header",
+      "content": "Hero Section"
+    },
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Badge Text",
+      "default": "✨ AI-Powered"
+    },
+    {
+      "type": "text",
+      "id": "hero_title",
+      "label": "Hero Title",
+      "default": "Create Your Personalized Book"
+    },
+    {
+      "type": "text",
+      "id": "hero_subtitle",
+      "label": "Hero Subtitle",
+      "default": "Generate a free preview of your custom book cover"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "CTA Button Text",
+      "default": "Create Free Preview"
+    },
+    {
+      "type": "header",
+      "content": "Form Section"
+    },
+    {
+      "type": "text",
+      "id": "form_title",
+      "label": "Form Title",
+      "default": "Tell us about the star of the story"
+    },
+    {
+      "type": "text",
+      "id": "name_label",
+      "label": "Name Field Label",
+      "default": "First Name"
+    },
+    {
+      "type": "text",
+      "id": "name_placeholder",
+      "label": "Name Placeholder",
+      "default": "e.g., Alex"
+    },
+    {
+      "type": "text",
+      "id": "secondary_field_label",
+      "label": "Secondary Field Label",
+      "default": "Details"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_extras",
+      "label": "Show Extra Elements",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "custom_placeholder",
+      "label": "Custom Request Placeholder",
+      "default": "Any special details or requests..."
+    },
+    {
+      "type": "text",
+      "id": "generate_text",
+      "label": "Generate Button Text",
+      "default": "Generate My Preview"
+    },
+    {
+      "type": "header",
+      "content": "Packages Section"
+    },
+    {
+      "type": "text",
+      "id": "packages_title",
+      "label": "Packages Title",
+      "default": "Choose Your Package"
+    },
+    {
+      "type": "text",
+      "id": "packages_subtitle",
+      "label": "Packages Subtitle",
+      "default": "Premium hardcover books, shipped worldwide"
+    },
+    {
+      "type": "text",
+      "id": "pkg1_name",
+      "label": "Package 1 Name",
+      "default": "Single Book"
+    },
+    {
+      "type": "text",
+      "id": "pkg2_name",
+      "label": "Package 2 Name",
+      "default": "Duo Pack"
+    },
+    {
+      "type": "text",
+      "id": "pkg2_bonus",
+      "label": "Package 2 Bonus Text",
+      "default": "Perfect for gifting"
+    },
+    {
+      "type": "text",
+      "id": "pkg3_name",
+      "label": "Package 3 Name",
+      "default": "Family Pack"
+    },
+    {
+      "type": "text",
+      "id": "pkg3_bonus",
+      "label": "Package 3 Bonus Text",
+      "default": "Great for families"
+    },
+    {
+      "type": "header",
+      "content": "API Connection"
+    },
+    {
+      "type": "text",
+      "id": "webhook_url",
+      "label": "Cover Generation Webhook URL"
+    },
+    {
+      "type": "text",
+      "id": "order_webhook",
+      "label": "Order Webhook URL"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "extra_element",
+      "name": "Extra Element",
+      "settings": [
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Icon (emoji)",
+          "default": "✨"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Magic"
+        },
+        {
+          "type": "text",
+          "id": "value",
+          "label": "Value (internal)",
+          "default": "magic"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Book Wizard - Generic",
+      "settings": {
+        "theme": "generic"
+      }
+    },
+    {
+      "name": "Book Wizard - Kids",
+      "settings": {
+        "theme": "kids",
+        "hero_title": "See Your Child as the Hero",
+        "hero_subtitle": "Generate a free preview of your personalized storybook cover",
+        "form_title": "Tell us about the star of the story",
+        "name_label": "Child's First Name",
+        "name_placeholder": "e.g., Emma",
+        "secondary_field_label": "Age",
+        "custom_placeholder": "Add a best friend, favorite toy, or custom adventure idea...",
+        "pkg2_bonus": "Perfect for siblings",
+        "pkg3_bonus": "Great for gifts"
+      },
+      "blocks": [
+        { "type": "extra_element", "settings": { "icon": "🐕", "label": "Pet", "value": "pet" } },
+        { "type": "extra_element", "settings": { "icon": "👧", "label": "Sibling", "value": "sibling" } },
+        { "type": "extra_element", "settings": { "icon": "🐉", "label": "Dragon", "value": "dragon" } },
+        { "type": "extra_element", "settings": { "icon": "🦄", "label": "Unicorn", "value": "unicorn" } },
+        { "type": "extra_element", "settings": { "icon": "🦸", "label": "Superhero", "value": "superhero" } },
+        { "type": "extra_element", "settings": { "icon": "🦕", "label": "Dinosaur", "value": "dinosaur" } },
+        { "type": "extra_element", "settings": { "icon": "👸", "label": "Princess", "value": "princess" } },
+        { "type": "extra_element", "settings": { "icon": "🚀", "label": "Space", "value": "space" } }
+      ]
+    },
+    {
+      "name": "Book Wizard - Valentines",
+      "settings": {
+        "theme": "valentines",
+        "badge_text": "💕 Love Story",
+        "hero_title": "Turn Your Love Story Into a Book",
+        "hero_subtitle": "Create a personalized romantic keepsake for your special someone",
+        "form_title": "Tell us about your love story",
+        "name_label": "Your Name",
+        "name_placeholder": "e.g., Sarah",
+        "secondary_field_label": "Partner's Name",
+        "custom_placeholder": "Share your story - how you met, special moments...",
+        "pkg1_name": "Love Edition",
+        "pkg2_name": "Couple's Set",
+        "pkg2_bonus": "One for each of you",
+        "pkg3_name": "Forever Pack",
+        "pkg3_bonus": "Include a gift copy"
+      },
+      "blocks": [
+        { "type": "extra_element", "settings": { "icon": "💍", "label": "Proposal", "value": "proposal" } },
+        { "type": "extra_element", "settings": { "icon": "🌹", "label": "Roses", "value": "roses" } },
+        { "type": "extra_element", "settings": { "icon": "🌅", "label": "Beach", "value": "beach" } },
+        { "type": "extra_element", "settings": { "icon": "🏔️", "label": "Mountains", "value": "mountains" } },
+        { "type": "extra_element", "settings": { "icon": "🎭", "label": "Date Night", "value": "datenight" } },
+        { "type": "extra_element", "settings": { "icon": "✈️", "label": "Travel", "value": "travel" } }
+      ]
+    },
+    {
+      "name": "Book Wizard - World Cup",
+      "settings": {
+        "theme": "worldcup",
+        "badge_text": "⚽ Champion Edition",
+        "hero_title": "Become a World Cup Champion",
+        "hero_subtitle": "Star in your own legendary football story",
+        "form_title": "Create your champion profile",
+        "name_label": "Player Name",
+        "name_placeholder": "e.g., Marco",
+        "secondary_field_label": "Favorite Team",
+        "custom_placeholder": "Your jersey number, position, special skills...",
+        "pkg1_name": "Player Edition",
+        "pkg2_name": "Team Pack",
+        "pkg2_bonus": "For you and a teammate",
+        "pkg3_name": "Champion Pack",
+        "pkg3_bonus": "Share the glory"
+      },
+      "blocks": [
+        { "type": "extra_element", "settings": { "icon": "🏆", "label": "Trophy", "value": "trophy" } },
+        { "type": "extra_element", "settings": { "icon": "⭐", "label": "MVP", "value": "mvp" } },
+        { "type": "extra_element", "settings": { "icon": "🥅", "label": "Goalkeeper", "value": "goalkeeper" } },
+        { "type": "extra_element", "settings": { "icon": "⚡", "label": "Speed", "value": "speed" } },
+        { "type": "extra_element", "settings": { "icon": "🎯", "label": "Striker", "value": "striker" } },
+        { "type": "extra_element", "settings": { "icon": "🛡️", "label": "Captain", "value": "captain" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

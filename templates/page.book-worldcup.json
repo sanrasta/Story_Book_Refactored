@@ -1,0 +1,40 @@
+{
+  "sections": {
+    "book-wizard": {
+      "type": "book-wizard-base",
+      "settings": {
+        "theme": "worldcup",
+        "badge_text": "⚽ Champion Edition",
+        "hero_title": "Become a World Cup Champion",
+        "hero_subtitle": "Star in your own legendary football story - lift the trophy!",
+        "cta_text": "Start Your Journey",
+        "form_title": "Create your champion profile",
+        "name_label": "Player Name",
+        "name_placeholder": "e.g., Marco",
+        "secondary_field_label": "Favorite Team",
+        "show_extras": true,
+        "custom_placeholder": "Your jersey number, position, special skills, dream goal moment...",
+        "generate_text": "Generate My Champion Story",
+        "packages_title": "Choose Your Package",
+        "packages_subtitle": "Premium hardcover books for the ultimate football fan",
+        "pkg1_name": "Player Edition",
+        "pkg2_name": "Team Pack",
+        "pkg2_bonus": "For you and a teammate",
+        "pkg3_name": "Champion Pack",
+        "pkg3_bonus": "Share the glory"
+      },
+      "blocks": {
+        "element-1": { "type": "extra_element", "settings": { "icon": "🏆", "label": "Trophy Lift", "value": "trophy" } },
+        "element-2": { "type": "extra_element", "settings": { "icon": "⭐", "label": "MVP Award", "value": "mvp" } },
+        "element-3": { "type": "extra_element", "settings": { "icon": "🥅", "label": "Goalkeeper", "value": "goalkeeper" } },
+        "element-4": { "type": "extra_element", "settings": { "icon": "⚡", "label": "Speed Demon", "value": "speed" } },
+        "element-5": { "type": "extra_element", "settings": { "icon": "🎯", "label": "Top Striker", "value": "striker" } },
+        "element-6": { "type": "extra_element", "settings": { "icon": "🛡️", "label": "Captain", "value": "captain" } },
+        "element-7": { "type": "extra_element", "settings": { "icon": "🎪", "label": "Skills Master", "value": "skills" } },
+        "element-8": { "type": "extra_element", "settings": { "icon": "🎵", "label": "Celebration", "value": "celebration" } }
+      },
+      "block_order": ["element-1", "element-2", "element-3", "element-4", "element-5", "element-6", "element-7", "element-8"]
+    }
+  },
+  "order": ["book-wizard"]
+}

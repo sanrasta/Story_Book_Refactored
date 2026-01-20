@@ -1,0 +1,367 @@
+{%- comment -%}
+  ============================================================================
+  MAGIC COVER SECTION - Orchestrator Shell (Phase 1)
+  ============================================================================
+  
+  PHASE 0 BASELINE - USER VISIBLE STATES TO VERIFY
+  ------------------------------------------------
+  Before making any further changes, verify parity for each state:
+  
+  1. DEFAULT VIEW
+     → Magic button visible ("Create Free Preview")
+     → Form hidden
+     → Package section visible with 3 cards
+     → Single Book selected by default
+     How to reach: Load page fresh
+  
+  2. FORM REVEALED
+     → Magic button hidden
+     → Form card visible with all fields
+     How to reach: Click "Create Free Preview" button
+  
+  3. FORM FILLED STATE
+     → Name input has value
+     → Age dropdown has selection
+     How to reach: Type name, select age
+  
+  4. FILE UPLOAD SELECTED
+     → Upload zone shows "Photo added ✓" in green
+     → Photo preview thumbnail visible
+     How to reach: Click upload zone, select image file
+  
+  5. ELEMENT SELECTION STATE
+     → Selected chips show dark background with white text
+     → Unselected chips show light background
+     How to reach: Click any magic element chips (Pet, Dragon, etc.)
+  
+  6. GENERATE LOADING STATE
+     → Button disabled
+     → Spinner visible with "Creating magic..." text
+     → "Generate My Preview" text hidden
+     How to reach: Fill name, click "Generate My Preview"
+  
+  7. GENERATED PREVIEW STATE
+     → Form hidden
+     → Result card visible with gold badge "Your Preview is Ready!"
+     → Cover image displayed in spotlight frame
+     → Auto-scrolls to package section
+     How to reach: Wait for generate to complete (~2.5s mock)
+  
+  8. PACKAGE SELECTION STATE
+     → Selected package has dark border + shadow
+     → Total price in submit button updates
+     How to reach: Click different package cards
+  
+  9. COUNTRY/CURRENCY CHANGE
+     → Currency symbols update ($, £, €, etc.)
+     → All prices update to selected currency
+     How to reach: Change country dropdown in shipping form
+  
+  10. SUBMIT LOADING STATE
+      → Button shows "Processing..."
+      → Button disabled
+      How to reach: Fill all required fields, click "Complete Order"
+  
+  11. SUCCESS MODAL STATE
+      → Modal overlay visible
+      → Success icon with checkmark
+      → "Order Confirmed! 🎉" message
+      How to reach: Wait for submit to complete (~1.5s mock)
+  
+  12. ERROR STATES
+      → Alert for missing name on generate
+      → Alert for file too large (>5MB)
+      → Browser validation for required shipping fields
+      How to reach: Try to generate without name, upload large file
+  
+  ============================================================================
+{%- endcomment -%}
+
+{%- comment -%} Phase 1: Top-level assignments {%- endcomment -%}
+{%- assign mc_product = product | default: section.settings.product -%}
+{%- assign mc_id_prefix = section.id -%}
+
+{%- comment -%} Phase 3: Include scoped CSS asset {%- endcomment -%}
+{{ 'magic-cover.css' | asset_url | stylesheet_tag }}
+
+{%- comment -%} Phase 4: Include Custom Element JS (deferred) {%- endcomment -%}
+<script src="{{ 'magic-cover.js' | asset_url }}" defer></script>
+
+{%- comment -%} Phase 3: CSS variable overrides from settings (if any) {%- endcomment -%}
+<style>
+  #MagicCover__{{ section.id }} {
+    /* Override CSS variables from section settings here if needed */
+    /* Example: --sb-cta: {{ section.settings.cta_color }}; */
+  }
+</style>
+
+{%- comment -%} Phase 1: Editor-only message when no product (if product is needed) {%- endcomment -%}
+{%- if mc_product == blank and request.design_mode -%}
+  <div style="padding: 40px; text-align: center; background: #fef3c7; border: 2px dashed #f59e0b; border-radius: 12px; margin: 20px;">
+    <p style="margin: 0; color: #92400e; font-weight: 600;">
+      ⚠️ Magic Cover Section: No product selected.
+    </p>
+    <p style="margin: 8px 0 0; color: #a16207; font-size: 14px;">
+      Select a product in section settings or add this section to a product template.
+    </p>
+  </div>
+{%- endif -%}
+
+<magic-cover 
+  id="MagicCover__{{ section.id }}" 
+  class="mc" 
+  data-section-id="{{ section.id }}"
+  {%- if mc_product != blank %}
+  data-product-id="{{ mc_product.id }}"
+  {%- endif %}
+>
+
+<div class="storybook-wrapper">
+  <div class="storybook-card">
+
+    <!-- MAGIC COVER GENERATOR -->
+    <div id="magicSection-{{ section.id }}" class="magic-section">
+      <div class="magic-badge">✨ AI-Powered</div>
+      <h2 class="magic-title">See Your Child as the Hero</h2>
+      <p class="magic-subtitle">Generate a free preview of your personalized storybook cover</p>
+      
+      <button type="button" id="magicBtn-{{ section.id }}" class="magic-button">
+        <span class="btn-glow"></span>
+        <span class="btn-content">
+          <svg class="wand-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 4V2"/><path d="M15 16v-2"/><path d="M8 9h2"/><path d="M20 9h2"/><path d="M17.8 11.8L19 13"/><path d="M15 9h0"/><path d="M17.8 6.2L19 5"/><path d="m3 21 9-9"/><path d="M12.2 6.2L11 5"/></svg>
+          <span>Create Free Preview</span>
+        </span>
+      </button>
+
+      {%- comment -%} Phase 2: Form snippet {%- endcomment -%}
+      {% render 'magic-cover-form', id_prefix: mc_id_prefix, settings: section.settings, product: mc_product %}
+
+      {%- comment -%} Phase 2: Preview snippet {%- endcomment -%}
+      {% render 'magic-cover-preview', id_prefix: mc_id_prefix, settings: section.settings, product: mc_product %}
+      </div>
+
+    <!-- PACKAGE SELECTION -->
+    <div id="packSection-{{ section.id }}" class="pack-section">
+      <div class="section-header">
+        <h2>Choose Your Package</h2>
+        <p>Premium hardcover books, shipped worldwide</p>
+      </div>
+
+      <form id="orderForm-{{ section.id }}">
+        <div class="package-grid">
+          
+          <label class="package-card">
+            <input type="radio" name="package" value="1" data-price-usd="49" data-price-eur="45" data-price-gbp="39" data-price-cad="65" data-price-aud="75" checked>
+            <div class="card-inner">
+              <div class="package-header">
+                <span class="package-name">Single Book</span>
+                <span class="package-price"><span class="currency-symbol">$</span><span class="price-value">49</span></span>
+    </div>
+              <ul class="package-features">
+                <li>✓ 1 Personalized Book</li>
+                <li>✓ Premium Hardcover</li>
+                <li>✓ Free Worldwide Shipping</li>
+              </ul>
+  </div>
+          </label>
+
+          <label class="package-card popular">
+            <div class="popular-badge">Most Popular</div>
+            <input type="radio" name="package" value="2" data-price-usd="89" data-price-eur="82" data-price-gbp="72" data-price-cad="119" data-price-aud="135">
+            <div class="card-inner">
+              <div class="package-header">
+                <span class="package-name">Duo Pack</span>
+                <div class="price-group">
+                  <span class="package-price"><span class="currency-symbol">$</span><span class="price-value">89</span></span>
+                  <span class="price-per">$44.50 each</span>
+</div>
+              </div>
+              <ul class="package-features">
+                <li>✓ 2 Personalized Books</li>
+                <li>✓ Save 10%</li>
+                <li>✓ Free Worldwide Shipping</li>
+                <li>✓ Perfect for siblings</li>
+              </ul>
+            </div>
+          </label>
+
+          <label class="package-card best-value">
+            <div class="value-badge">Best Value</div>
+            <input type="radio" name="package" value="3" data-price-usd="119" data-price-eur="109" data-price-gbp="95" data-price-cad="159" data-price-aud="179">
+            <div class="card-inner">
+              <div class="package-header">
+                <span class="package-name">Family Pack</span>
+                <div class="price-group">
+                  <span class="package-price"><span class="currency-symbol">$</span><span class="price-value">119</span></span>
+                  <span class="price-per">$39.67 each</span>
+            </div>
+          </div>
+              <ul class="package-features">
+                <li>✓ 3 Personalized Books</li>
+                <li>✓ Save 20%</li>
+                <li>✓ Free Worldwide Shipping</li>
+                <li>✓ Great for gifts</li>
+              </ul>
+        </div>
+          </label>
+
+        </div>
+
+        <div class="order-form">
+          <h3>Shipping Details</h3>
+          
+          <div class="input-grid">
+            <div class="input-field">
+              <label for="customerName-{{ section.id }}">Your Name</label>
+              <input type="text" id="customerName-{{ section.id }}" name="customer_name" placeholder="Full name" required autocomplete="name">
+            </div>
+
+            <div class="input-field">
+              <label for="customerEmail-{{ section.id }}">Email</label>
+              <input type="email" id="customerEmail-{{ section.id }}" name="email" placeholder="your@email.com" required autocomplete="email">
+            </div>
+          
+            <div class="input-field full-width">
+              <label for="customerPhone-{{ section.id }}">Phone Number</label>
+              <div class="phone-input">
+                <select name="country_code" id="countryCode-{{ section.id }}" aria-label="Country code">
+                  <option value="+1">🇺🇸 +1</option>
+                  <option value="+44">🇬🇧 +44</option>
+                  <option value="+61">🇦🇺 +61</option>
+                  <option value="+1">🇨🇦 +1</option>
+                  <option value="+33">🇫🇷 +33</option>
+                  <option value="+49">🇩🇪 +49</option>
+                  <option value="+34">🇪🇸 +34</option>
+                  <option value="+39">🇮🇹 +39</option>
+                  <option value="+31">🇳🇱 +31</option>
+                  <option value="+81">🇯🇵 +81</option>
+                  <option value="+86">🇨🇳 +86</option>
+                  <option value="+91">🇮🇳 +91</option>
+                  <option value="+55">🇧🇷 +55</option>
+                  <option value="+52">🇲🇽 +52</option>
+                  <option value="+971">🇦🇪 +971</option>
+                </select>
+                <input type="tel" id="customerPhone-{{ section.id }}" name="phone" placeholder="Phone number" required autocomplete="tel">
+              </div>
+            </div>
+
+            <div class="input-field full-width">
+              <label for="customerAddress-{{ section.id }}">Shipping Address</label>
+              <input type="text" id="customerAddress-{{ section.id }}" name="address" placeholder="Street address" required autocomplete="street-address">
+            </div>
+
+            <div class="input-field">
+              <label for="customerCity-{{ section.id }}">City</label>
+              <input type="text" id="customerCity-{{ section.id }}" name="city" placeholder="City" required autocomplete="address-level2">
+            </div>
+
+            <div class="input-field">
+              <label for="countrySelect-{{ section.id }}">Country</label>
+              <select name="country" id="countrySelect-{{ section.id }}" required autocomplete="country">
+                <option value="">Select country</option>
+                <option value="US">United States</option>
+                <option value="GB">United Kingdom</option>
+                <option value="CA">Canada</option>
+                <option value="AU">Australia</option>
+                <option value="DE">Germany</option>
+                <option value="FR">France</option>
+                <option value="ES">Spain</option>
+                <option value="IT">Italy</option>
+                <option value="NL">Netherlands</option>
+                <option value="BE">Belgium</option>
+                <option value="AT">Austria</option>
+                <option value="CH">Switzerland</option>
+                <option value="IE">Ireland</option>
+                <option value="NZ">New Zealand</option>
+                <option value="SG">Singapore</option>
+                <option value="AE">UAE</option>
+                <option value="JP">Japan</option>
+              </select>
+            </div>
+
+            <div class="input-field">
+              <label for="customerPostal-{{ section.id }}">Postal Code</label>
+              <input type="text" id="customerPostal-{{ section.id }}" name="postal_code" placeholder="Postal/ZIP code" required autocomplete="postal-code">
+            </div>
+          </div>
+
+          <div class="trust-badges">
+            <div class="badge">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <span>Secure Checkout</span>
+      </div>
+            <div class="badge">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+              <span>Free Shipping</span>
+      </div>
+            <div class="badge">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="10"/></svg>
+              <span>Ships in 5-7 Days</span>
+            </div>
+          </div>
+
+          <button type="submit" id="submitBtn-{{ section.id }}" class="submit-btn">
+            <span class="btn-text">Complete Order</span>
+            <span class="btn-price">• <span class="currency-symbol">$</span><span class="total-price">49</span></span>
+          </button>
+
+          <p class="guarantee">💯 100% Satisfaction Guaranteed or Your Money Back</p>
+        </div>
+    </form>
+    </div>
+
+  </div>
+</div>
+
+<!-- Success Modal -->
+<div 
+  id="successModal-{{ section.id }}" 
+  class="modal-overlay hidden"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="modalTitle-{{ section.id }}"
+  aria-describedby="modalDesc-{{ section.id }}"
+>
+  <div class="modal-content">
+    <div class="success-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+    </div>
+    <h3 id="modalTitle-{{ section.id }}">Order Confirmed! 🎉</h3>
+    <p id="modalDesc-{{ section.id }}">We've received your order and will start creating your magical book. You'll receive a confirmation email shortly.</p>
+    <button type="button" class="modal-btn">Got it!</button>
+  </div>
+</div>
+
+</magic-cover>
+
+{% schema %}
+{
+  "name": "Magic Cover",
+  "settings": [
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Product",
+      "info": "Select a product for this section (optional on product templates)"
+    },
+    {
+      "type": "header",
+      "content": "API Connection"
+    },
+    {
+      "type": "text",
+      "id": "webhook_url",
+      "label": "n8n Webhook URL",
+      "info": "Your cover generation webhook"
+    },
+    {
+      "type": "text",
+      "id": "order_webhook",
+      "label": "Order Webhook URL",
+      "info": "Where to send order data"
+    }
+  ],
+  "presets": [{ "name": "Magic Cover" }]
+}
+{% endschema %}
+

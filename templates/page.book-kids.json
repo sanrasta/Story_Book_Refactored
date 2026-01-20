@@ -1,0 +1,40 @@
+{
+  "sections": {
+    "book-wizard": {
+      "type": "book-wizard-base",
+      "settings": {
+        "theme": "kids",
+        "badge_text": "✨ AI-Powered",
+        "hero_title": "See Your Child as the Hero",
+        "hero_subtitle": "Generate a free preview of your personalized storybook cover",
+        "cta_text": "Create Free Preview",
+        "form_title": "Tell us about the star of the story",
+        "name_label": "Child's First Name",
+        "name_placeholder": "e.g., Emma",
+        "secondary_field_label": "Age",
+        "show_extras": true,
+        "custom_placeholder": "Add a best friend, favorite toy, or custom adventure idea...",
+        "generate_text": "Generate My Preview",
+        "packages_title": "Choose Your Package",
+        "packages_subtitle": "Premium hardcover books, shipped worldwide",
+        "pkg1_name": "Single Book",
+        "pkg2_name": "Duo Pack",
+        "pkg2_bonus": "Perfect for siblings",
+        "pkg3_name": "Family Pack",
+        "pkg3_bonus": "Great for gifts"
+      },
+      "blocks": {
+        "element-1": { "type": "extra_element", "settings": { "icon": "🐕", "label": "Pet", "value": "pet" } },
+        "element-2": { "type": "extra_element", "settings": { "icon": "👧", "label": "Sibling", "value": "sibling" } },
+        "element-3": { "type": "extra_element", "settings": { "icon": "🐉", "label": "Dragon", "value": "dragon" } },
+        "element-4": { "type": "extra_element", "settings": { "icon": "🦄", "label": "Unicorn", "value": "unicorn" } },
+        "element-5": { "type": "extra_element", "settings": { "icon": "🦸", "label": "Superhero", "value": "superhero" } },
+        "element-6": { "type": "extra_element", "settings": { "icon": "🦕", "label": "Dinosaur", "value": "dinosaur" } },
+        "element-7": { "type": "extra_element", "settings": { "icon": "👸", "label": "Princess", "value": "princess" } },
+        "element-8": { "type": "extra_element", "settings": { "icon": "🚀", "label": "Space", "value": "space" } }
+      },
+      "block_order": ["element-1", "element-2", "element-3", "element-4", "element-5", "element-6", "element-7", "element-8"]
+    }
+  },
+  "order": ["book-wizard"]
+}

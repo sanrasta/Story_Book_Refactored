@@ -1,0 +1,55 @@
+# Shopify Platinum Refactor Rules
+
+1. Shopify architecture
+   1. Use Shopify 2.0 sections, blocks, snippets.
+   2. Keep section file as orchestrator: assignments, schema, high level layout only.
+   3. UI chunks go to snippets with explicit props.
+
+2. Liquid rules
+   1. Use render, never include.
+   2. Pass every dependency explicitly to snippets.
+   3. Compute variables at top of file.
+   4. Any snippet must begin with a Props comment block listing required and optional props and defaults.
+
+3. Product availability rule
+   1. The section must not assume product exists.
+   2. Section schema must include a product setting.
+   3. Orchestrator chooses mc_product using product when present, otherwise section.settings.product.
+   4. If mc_product is blank, render a clear placeholder message visible only in theme editor.
+
+4. CSS rules
+   1. No global CSS. All selectors must be scoped under a unique root selector per section instance.
+   2. Root selector must be an id on the section wrapper: #MagicCover__{{ section.id }}.
+   3. Use CSS variables for any values coming from section.settings.
+   4. Only allow a small inline style block in the section file that assigns CSS variables on #MagicCover__{{ section.id }}.
+   5. All other CSS lives in assets/magic-cover.css.
+
+5. JavaScript rules
+   1. No jQuery.
+   2. Use a Custom Element for section logic. Tag name: magic-cover.
+   3. Web component must be multi instance safe and store all state on the element instance.
+   4. No module global state. No singleton caches.
+   5. Query scope: use this.querySelector and this.querySelectorAll for internal nodes.
+      If you must touch window or document, you must add listeners in connectedCallback and remove in disconnectedCallback.
+   6. Custom element registration must be guarded:
+      Only define if customElements.get('magic-cover') is falsy.
+   7. Configuration must be read from data attributes on the host element.
+      If JSON is used, it must be serialized with json and escaped for attribute context in Liquid.
+
+6. IDs and accessibility
+   1. Any id in snippets must be unique per instance using a passed id_prefix, typically section.id.
+   2. Labels must point to inputs using for and id.
+   3. Errors must be accessible, use aria describedby and aria live when appropriate.
+   4. Focus states must be visible.
+
+7. Performance
+   1. Progressive enhancement: core UX must work with HTML and CSS first.
+   2. JS must be deferred.
+   3. Lazy load images below the fold only.
+   4. Preview area must reserve space using aspect ratio to prevent layout shift.
+
+8. Theme editor behavior
+   1. Do not assume full page reloads.
+   2. All cleanup must happen in disconnectedCallback.
+   3. If observers, timers, media streams are used, they must be disposed.
+
